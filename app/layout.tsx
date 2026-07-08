@@ -50,7 +50,7 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col">
         <Suspense
           fallback={
-            <CartProvider>
+            <CartProvider countReady={false}>
               <AppChrome>{children}</AppChrome>
             </CartProvider>
           }

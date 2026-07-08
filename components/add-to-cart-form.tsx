@@ -86,7 +86,7 @@ export function AddToCartForm({
               });
               if (result.success) {
                 setJustAdded(true);
-                openWithCart(result.data);
+                openWithCart(result.data, { variantId: selected.id });
                 window.setTimeout(() => setJustAdded(false), 1600);
               } else {
                 setError(result.error.message);

@@ -14,34 +14,43 @@ import { getCartAction } from "@/app/(shop)/actions";
 import type { CartWithItems } from "@/app/server/features/cart/cart.repository";
 import { CartDrawer } from "@/components/cart-drawer";
 
+type OpenWithCartOptions = {
+  /** Prefer highlighting the line for this variant (add-to-cart). */
+  variantId?: string;
+  highlightItemId?: string;
+};
+
 type CartContextValue = {
   isOpen: boolean;
   cart: CartWithItems | null;
   itemCount: number;
   isRefreshing: boolean;
+  /** True until server cart count has been provided (avoids a false zero badge). */
+  countReady: boolean;
+  loadError: string | null;
   highlightedItemId: string | null;
   open: () => void;
   close: () => void;
-  openWithCart: (cart: CartWithItems, highlightItemId?: string) => void;
+  openWithCart: (cart: CartWithItems, options?: OpenWithCartOptions) => void;
   setCart: (cart: CartWithItems) => void;
   refresh: () => Promise<void>;
 };
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-function findChangedItemId(
-  previous: CartWithItems | null,
+function findHighlightItemId(
   next: CartWithItems,
+  options?: OpenWithCartOptions,
 ): string | null {
-  if (!previous) {
-    return next.items[0]?.id ?? null;
+  if (options?.highlightItemId) {
+    return options.highlightItemId;
   }
 
-  for (const item of next.items) {
-    const before = previous.items.find((line) => line.id === item.id);
-    if (!before || before.quantity !== item.quantity) {
-      return item.id;
-    }
+  if (options?.variantId) {
+    return (
+      next.items.find((item) => item.variantId === options.variantId)?.id ??
+      null
+    );
   }
 
   return next.items[0]?.id ?? null;
@@ -50,21 +59,26 @@ function findChangedItemId(
 export function CartProvider({
   children,
   initialCount = 0,
+  countReady = true,
 }: {
   children: ReactNode;
   initialCount?: number;
+  /** Set false in Suspense fallbacks before the server cart count is known. */
+  countReady?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [cart, setCartState] = useState<CartWithItems | null>(null);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(
     null,
   );
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [isRefreshing, startRefresh] = useTransition();
   const cartRef = useRef(cart);
   cartRef.current = cart;
 
   const setCart = useCallback((next: CartWithItems) => {
     setCartState(next);
+    setLoadError(null);
   }, []);
 
   const refresh = useCallback(async () => {
@@ -73,6 +87,9 @@ export function CartProvider({
         const result = await getCartAction();
         if (result.success) {
           setCartState(result.data);
+          setLoadError(null);
+        } else {
+          setLoadError(result.error.message);
         }
         resolve();
       });
@@ -81,11 +98,15 @@ export function CartProvider({
 
   const open = useCallback(() => {
     setHighlightedItemId(null);
+    setLoadError(null);
     setIsOpen(true);
     startRefresh(async () => {
       const result = await getCartAction();
       if (result.success) {
         setCartState(result.data);
+        setLoadError(null);
+      } else {
+        setLoadError(result.error.message);
       }
     });
   }, []);
@@ -93,14 +114,14 @@ export function CartProvider({
   const close = useCallback(() => {
     setIsOpen(false);
     setHighlightedItemId(null);
+    setLoadError(null);
   }, []);
 
   const openWithCart = useCallback(
-    (next: CartWithItems, highlightItemId?: string) => {
-      const highlight =
-        highlightItemId ?? findChangedItemId(cartRef.current, next);
+    (next: CartWithItems, options?: OpenWithCartOptions) => {
       setCartState(next);
-      setHighlightedItemId(highlight);
+      setLoadError(null);
+      setHighlightedItemId(findHighlightItemId(next, options));
       setIsOpen(true);
     },
     [],
@@ -114,6 +135,8 @@ export function CartProvider({
       cart,
       itemCount,
       isRefreshing,
+      countReady,
+      loadError,
       highlightedItemId,
       open,
       close,
@@ -126,6 +149,8 @@ export function CartProvider({
       cart,
       itemCount,
       isRefreshing,
+      countReady,
+      loadError,
       highlightedItemId,
       open,
       close,

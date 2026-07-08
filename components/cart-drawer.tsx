@@ -13,7 +13,8 @@ import { formatMoney, cn } from "@/lib/utils";
 import type { CartWithItems } from "@/app/server/features/cart/cart.repository";
 
 export function CartDrawer() {
-  const { isOpen, cart, close, setCart, isRefreshing } = useCart();
+  const { isOpen, cart, close, setCart, isRefreshing, loadError, refresh } =
+    useCart();
   const [mounted, setMounted] = useState(false);
   const [visible, setVisible] = useState(false);
   const titleId = useId();
@@ -88,7 +89,9 @@ export function CartDrawer() {
                   ? `${cart.itemCount} ${cart.itemCount === 1 ? "item" : "items"}`
                   : isRefreshing
                     ? "Updating…"
-                    : "Ready when you are"}
+                    : loadError
+                      ? "Couldn’t load cart"
+                      : "Ready when you are"}
               </p>
             </div>
           </div>
@@ -106,6 +109,8 @@ export function CartDrawer() {
         <div className="flex min-h-0 flex-1 flex-col">
           {!cart && isRefreshing ? (
             <DrawerLoading />
+          ) : !cart && loadError ? (
+            <DrawerError message={loadError} onRetry={refresh} pending={isRefreshing} />
           ) : !cart || cart.items.length === 0 ? (
             <EmptyDrawer onClose={close} />
           ) : (
@@ -122,6 +127,40 @@ function DrawerLoading() {
     <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 text-muted">
       <Loader2 className="h-6 w-6 animate-spin text-accent" />
       <p className="text-sm">Loading your cart…</p>
+    </div>
+  );
+}
+
+function DrawerError({
+  message,
+  onRetry,
+  pending,
+}: {
+  message: string;
+  onRetry: () => Promise<void>;
+  pending: boolean;
+}) {
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center px-8 text-center">
+      <h3 className="text-lg font-semibold">Couldn’t load your cart</h3>
+      <p className="mt-2 max-w-xs text-sm text-muted">{message}</p>
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() => {
+          void onRetry();
+        }}
+        className="mt-6 inline-flex h-11 items-center justify-center gap-2 rounded-full bg-accent px-5 text-sm font-medium text-accent-foreground transition hover:brightness-110 disabled:opacity-50"
+      >
+        {pending ? (
+          <>
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+            Retrying…
+          </>
+        ) : (
+          "Try again"
+        )}
+      </button>
     </div>
   );
 }
