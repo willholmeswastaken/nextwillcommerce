@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { CartShell } from "@/components/cart-shell";
+import { CartProvider } from "@/components/cart-provider";
 import { SiteFooter, SiteHeader } from "@/components/site-header";
 
 const geistSans = Geist({
@@ -24,6 +27,16 @@ export const metadata: Metadata = {
     "A blazing-fast Next.js 16.3 ecommerce template with Effect-TS, Instant Navigations, and Better Auth.",
 };
 
+function AppChrome({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <SiteHeader />
+      <main className="flex-1">{children}</main>
+      <SiteFooter />
+    </>
+  );
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -35,9 +48,17 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
+        <Suspense
+          fallback={
+            <CartProvider>
+              <AppChrome>{children}</AppChrome>
+            </CartProvider>
+          }
+        >
+          <CartShell>
+            <AppChrome>{children}</AppChrome>
+          </CartShell>
+        </Suspense>
       </body>
     </html>
   );
