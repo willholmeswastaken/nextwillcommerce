@@ -37,11 +37,17 @@ DATABASE_URL=postgresql://user:password@localhost:5432/ecommerce
 BETTER_AUTH_SECRET=generate-a-long-random-secret
 BETTER_AUTH_URL=http://localhost:3000
 
-# Optional — mock checkout is used when unset
+# Required in production. Locally, mock checkout is used when unset.
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+
+# Optional overrides
+# ALLOW_MOCK_CHECKOUT=true          # force mock payments even in production
+# ALLOW_DESTRUCTIVE_SEED=true       # allow db:seed wipe in production
 ```
+
+Mock checkout is **dev-only by default**. In production, unset Stripe keys fail closed unless `ALLOW_MOCK_CHECKOUT=true`.
 
 ## Architecture
 
@@ -97,8 +103,10 @@ Catalog queries live in `app/(shop)/catalog.ts` and never read cookies/headers i
 
 ## Checkout
 
-1. **Stripe path** — when `STRIPE_SECRET_KEY` is set, creates a Checkout Session and fulfills via webhook / success redirect
-2. **Mock path** — when unset, creates a paid order immediately (great for local demos)
+1. **Stripe path** — when `STRIPE_SECRET_KEY` is set, creates a Checkout Session and fulfills via webhook / success redirect. Inventory is decremented atomically when the order is marked paid; paid amount is verified against the order total.
+2. **Mock path** — when Stripe is unset **and** not in production (or `ALLOW_MOCK_CHECKOUT=true`), creates a paid order immediately and decrements inventory (great for local demos).
+
+Guest confirmation URLs include an opaque `token` query param. Account order detail requires ownership (`userId` match); guest orders are not visible under `/account`.
 
 Local Stripe webhooks:
 

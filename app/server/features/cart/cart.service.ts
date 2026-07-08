@@ -60,6 +60,7 @@ const setGuestId = (guestId: string) =>
       jar.set(GUEST_COOKIE, guestId, {
         httpOnly: true,
         sameSite: "lax",
+        secure: process.env.NODE_ENV === "production",
         path: "/",
         maxAge: 60 * 60 * 24 * 30,
       });
@@ -134,14 +135,14 @@ export const CartServiceLive = Layer.effect(
       updateItem: ({ itemId, quantity }) =>
         Effect.gen(function* () {
           const cartId = yield* resolveCartId;
-          yield* repo.updateItemQuantity({ itemId, quantity });
+          yield* repo.updateItemQuantity({ cartId, itemId, quantity });
           return yield* repo.getWithItems(cartId);
         }),
 
       removeItem: (itemId) =>
         Effect.gen(function* () {
           const cartId = yield* resolveCartId;
-          yield* repo.removeItem(itemId);
+          yield* repo.removeItem({ cartId, itemId });
           return yield* repo.getWithItems(cartId);
         }),
 

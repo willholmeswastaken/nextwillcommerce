@@ -39,7 +39,8 @@ export async function getProducts(categorySlug?: string) {
 export async function getProductBySlug(slug: string) {
   "use cache";
   cacheTag("products", `product:${slug}`);
-  cacheLife("hours");
+  // Short TTL so inventory/pricing on PDPs stay reasonably fresh.
+  cacheLife("minutes");
 
   return runtime.runPromise(
     Effect.gen(function* () {

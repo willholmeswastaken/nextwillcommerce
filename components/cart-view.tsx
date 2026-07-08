@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useOptimistic, useTransition } from "react";
+import { useOptimistic, useState, useTransition } from "react";
 import {
   removeCartItemAction,
   updateCartItemAction,
@@ -13,6 +13,7 @@ import type { CartWithItems } from "@/app/server/features/cart/cart.repository";
 export function CartView({ cart }: { cart: CartWithItems }) {
   const [optimisticCart, setOptimisticCart] = useOptimistic(cart);
   const [pending, startTransition] = useTransition();
+  const [error, setError] = useState<string | null>(null);
 
   if (optimisticCart.items.length === 0) {
     return (
@@ -34,6 +35,11 @@ export function CartView({ cart }: { cart: CartWithItems }) {
   return (
     <div className="grid gap-8 lg:grid-cols-[1.4fr_0.8fr]">
       <div className="space-y-4">
+        {error ? (
+          <p className="rounded-2xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger">
+            {error}
+          </p>
+        ) : null}
         {optimisticCart.items.map((item) => (
           <div
             key={item.id}
@@ -72,6 +78,7 @@ export function CartView({ cart }: { cart: CartWithItems }) {
                     onClick={() => {
                       const next = Math.max(0, item.quantity - 1);
                       startTransition(async () => {
+                        setError(null);
                         setOptimisticCart({
                           ...optimisticCart,
                           items: optimisticCart.items
@@ -91,10 +98,13 @@ export function CartView({ cart }: { cart: CartWithItems }) {
                               item.variant.priceCents,
                           ),
                         });
-                        await updateCartItemAction({
+                        const result = await updateCartItemAction({
                           itemId: item.id,
                           quantity: next,
                         });
+                        if (!result.success) {
+                          setError(result.error.message);
+                        }
                       });
                     }}
                   >
@@ -107,6 +117,7 @@ export function CartView({ cart }: { cart: CartWithItems }) {
                     disabled={pending}
                     onClick={() => {
                       startTransition(async () => {
+                        setError(null);
                         setOptimisticCart({
                           ...optimisticCart,
                           items: optimisticCart.items.map((line) =>
@@ -119,10 +130,13 @@ export function CartView({ cart }: { cart: CartWithItems }) {
                             optimisticCart.subtotalCents +
                             item.variant.priceCents,
                         });
-                        await updateCartItemAction({
+                        const result = await updateCartItemAction({
                           itemId: item.id,
                           quantity: item.quantity + 1,
                         });
+                        if (!result.success) {
+                          setError(result.error.message);
+                        }
                       });
                     }}
                   >
@@ -135,6 +149,7 @@ export function CartView({ cart }: { cart: CartWithItems }) {
                   disabled={pending}
                   onClick={() => {
                     startTransition(async () => {
+                      setError(null);
                       setOptimisticCart({
                         ...optimisticCart,
                         items: optimisticCart.items.filter(
@@ -150,7 +165,12 @@ export function CartView({ cart }: { cart: CartWithItems }) {
                             item.variant.priceCents * item.quantity,
                         ),
                       });
-                      await removeCartItemAction(item.id);
+                      const result = await removeCartItemAction({
+                        itemId: item.id,
+                      });
+                      if (!result.success) {
+                        setError(result.error.message);
+                      }
                     });
                   }}
                 >

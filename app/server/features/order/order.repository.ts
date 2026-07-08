@@ -1,10 +1,12 @@
 import "server-only";
 import { Context, Effect, Layer } from "effect";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, sql, and } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import {
   orders,
   orderItems,
+  productVariants,
+  cartItems,
   type Order,
   type OrderItem,
 } from "@/drizzle/schema";
@@ -13,9 +15,27 @@ import {
   DatabaseService,
   tryDb,
 } from "@/app/server/features/shared/database";
-import { OrderNotFound } from "@/app/server/lib/errors";
+import { OrderNotFound, OutOfStock } from "@/app/server/lib/errors";
+import { createOrderAccessToken } from "@/lib/order-access";
 
 export type OrderWithItems = Order & { items: OrderItem[] };
+
+type FulfillError = DatabaseError | OutOfStock | OrderNotFound;
+
+function tryFulfill<A>(fn: () => Promise<A>) {
+  return Effect.tryPromise({
+    try: fn,
+    catch: (cause): FulfillError => {
+      if (cause instanceof OutOfStock) return cause;
+      if (cause instanceof OrderNotFound) return cause;
+      if (cause instanceof DatabaseError) return cause;
+      return new DatabaseError({
+        message: cause instanceof Error ? cause.message : "Database error",
+        cause,
+      });
+    },
+  });
+}
 
 export class OrderRepository extends Context.Tag("OrderRepository")<
   OrderRepository,
@@ -35,7 +55,7 @@ export class OrderRepository extends Context.Tag("OrderRepository")<
         unitPriceCents: number;
         quantity: number;
       }>;
-    }) => Effect.Effect<OrderWithItems, DatabaseError>;
+    }) => Effect.Effect<OrderWithItems, DatabaseError | OutOfStock>;
     getById: (
       orderId: string,
     ) => Effect.Effect<OrderWithItems, OrderNotFound | DatabaseError>;
@@ -45,7 +65,16 @@ export class OrderRepository extends Context.Tag("OrderRepository")<
     findByStripeSession: (
       sessionId: string,
     ) => Effect.Effect<OrderWithItems | null, DatabaseError>;
-    markPaid: (orderId: string) => Effect.Effect<Order, DatabaseError>;
+    /**
+     * Atomically mark paid and decrement inventory. Idempotent if already paid.
+     */
+    markPaidAndDecrementInventory: (
+      orderId: string,
+    ) => Effect.Effect<
+      OrderWithItems,
+      OrderNotFound | OutOfStock | DatabaseError
+    >;
+    clearCartById: (cartId: string) => Effect.Effect<void, DatabaseError>;
   }
 >() {}
 
@@ -56,35 +85,98 @@ export const OrderRepositoryLive = Layer.effect(
 
     return OrderRepository.of({
       create: (data) =>
-        tryDb(async () => {
-          const id = nanoid();
-          const [order] = await database
-            .insert(orders)
-            .values({
-              id,
-              userId: data.userId ?? null,
-              email: data.email,
-              totalCents: data.totalCents,
-              currency: data.currency ?? "USD",
-              paymentProvider: data.paymentProvider,
-              stripeSessionId: data.stripeSessionId,
-              status: data.status ?? "pending",
-            })
-            .returning();
+        tryFulfill(async () => {
+          return database.transaction(async (tx) => {
+            for (const item of data.items) {
+              const locked = await tx.query.productVariants.findFirst({
+                where: eq(productVariants.id, item.variantId),
+                with: { product: true },
+              });
+              if (!locked?.product?.active) {
+                throw new OutOfStock({
+                  variantId: item.variantId,
+                  available: 0,
+                  requested: item.quantity,
+                });
+              }
+              if (locked.inventory < item.quantity) {
+                throw new OutOfStock({
+                  variantId: item.variantId,
+                  available: locked.inventory,
+                  requested: item.quantity,
+                });
+              }
+            }
 
-          const items = await database
-            .insert(orderItems)
-            .values(
-              data.items.map((item) => ({
-                id: nanoid(),
-                orderId: id,
-                ...item,
-              })),
-            )
-            .returning();
+            const id = nanoid();
+            const accessToken = createOrderAccessToken();
+            const [order] = await tx
+              .insert(orders)
+              .values({
+                id,
+                userId: data.userId ?? null,
+                email: data.email,
+                totalCents: data.totalCents,
+                currency: data.currency ?? "USD",
+                paymentProvider: data.paymentProvider,
+                stripeSessionId: data.stripeSessionId,
+                status: data.status ?? "pending",
+                accessToken,
+              })
+              .returning();
 
-          return { ...order!, items };
-        }),
+            if (!order) {
+              throw new DatabaseError({ message: "Failed to create order" });
+            }
+
+            const items = await tx
+              .insert(orderItems)
+              .values(
+                data.items.map((item) => ({
+                  id: nanoid(),
+                  orderId: id,
+                  ...item,
+                })),
+              )
+              .returning();
+
+            if (data.status === "paid") {
+              for (const item of data.items) {
+                const updated = await tx
+                  .update(productVariants)
+                  .set({
+                    inventory: sql`${productVariants.inventory} - ${item.quantity}`,
+                  })
+                  .where(
+                    and(
+                      eq(productVariants.id, item.variantId),
+                      sql`${productVariants.inventory} >= ${item.quantity}`,
+                    ),
+                  )
+                  .returning({ id: productVariants.id });
+
+                if (updated.length === 0) {
+                  throw new OutOfStock({
+                    variantId: item.variantId,
+                    available: 0,
+                    requested: item.quantity,
+                  });
+                }
+              }
+            }
+
+            return { ...order, items };
+          });
+        }).pipe(
+          Effect.mapError((err): DatabaseError | OutOfStock => {
+            if (err instanceof OutOfStock) return err;
+            if (err instanceof DatabaseError) return err;
+            return new DatabaseError({
+              message: "Failed to create order",
+              cause: err,
+            });
+          }),
+        ),
 
       getById: (orderId) =>
         Effect.gen(function* () {
@@ -119,14 +211,60 @@ export const OrderRepositoryLive = Layer.effect(
           return (order as OrderWithItems | undefined) ?? null;
         }),
 
-      markPaid: (orderId) =>
+      markPaidAndDecrementInventory: (orderId) =>
+        tryFulfill(async () => {
+          return database.transaction(async (tx) => {
+            const order = await tx.query.orders.findFirst({
+              where: eq(orders.id, orderId),
+              with: { items: true },
+            });
+            if (!order) {
+              throw new OrderNotFound({ orderId });
+            }
+            if (order.status === "paid") {
+              return order as OrderWithItems;
+            }
+
+            for (const item of order.items) {
+              const updated = await tx
+                .update(productVariants)
+                .set({
+                  inventory: sql`${productVariants.inventory} - ${item.quantity}`,
+                })
+                .where(
+                  and(
+                    eq(productVariants.id, item.variantId),
+                    sql`${productVariants.inventory} >= ${item.quantity}`,
+                  ),
+                )
+                .returning({ id: productVariants.id });
+
+              if (updated.length === 0) {
+                throw new OutOfStock({
+                  variantId: item.variantId,
+                  available: 0,
+                  requested: item.quantity,
+                });
+              }
+            }
+
+            const [row] = await tx
+              .update(orders)
+              .set({ status: "paid", updatedAt: new Date() })
+              .where(eq(orders.id, orderId))
+              .returning();
+
+            if (!row) {
+              throw new DatabaseError({ message: "Failed to mark order paid" });
+            }
+
+            return { ...row, items: order.items } as OrderWithItems;
+          });
+        }),
+
+      clearCartById: (cartId) =>
         tryDb(async () => {
-          const [row] = await database
-            .update(orders)
-            .set({ status: "paid", updatedAt: new Date() })
-            .where(eq(orders.id, orderId))
-            .returning();
-          return row!;
+          await database.delete(cartItems).where(eq(cartItems.cartId, cartId));
         }),
     });
   }),

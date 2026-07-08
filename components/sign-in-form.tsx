@@ -7,11 +7,15 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { mergeCartOnLoginAction } from "@/app/(auth)/actions";
+import { safeRedirectPath } from "@/lib/safe-redirect";
 
 export function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? "/account/orders";
+  const next = safeRedirectPath(
+    searchParams.get("next"),
+    "/account/orders",
+  );
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 

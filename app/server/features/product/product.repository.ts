@@ -195,7 +195,7 @@ export const ProductRepositoryLive = Layer.effect(
               with: { product: true },
             }),
           );
-          if (!variant || !variant.product) {
+          if (!variant || !variant.product || !variant.product.active) {
             return yield* Effect.fail(new ProductNotFound({ id: variantId }));
           }
           return variant as ProductVariant & { product: Product };

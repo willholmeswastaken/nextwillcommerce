@@ -344,6 +344,17 @@ const PRODUCTS: SeedProduct[] = [
 ];
 
 async function seed() {
+  const allowDestructive =
+    process.env.ALLOW_DESTRUCTIVE_SEED === "true" ||
+    process.env.NODE_ENV !== "production";
+
+  if (!allowDestructive) {
+    console.error(
+      "Refusing to seed: destructive wipe is blocked in production. Set ALLOW_DESTRUCTIVE_SEED=true to override.",
+    );
+    process.exit(1);
+  }
+
   console.log("Seeding database...");
 
   await db.delete(schema.orderItems);

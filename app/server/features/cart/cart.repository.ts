@@ -53,15 +53,17 @@ export class CartRepository extends Context.Tag("CartRepository")<
       quantity: number;
     }) => Effect.Effect<CartItem, OutOfStock | VariantNotFound | DatabaseError>;
     updateItemQuantity: (data: {
+      cartId: string;
       itemId: string;
       quantity: number;
     }) => Effect.Effect<
       CartItem | null,
       CartItemNotFound | OutOfStock | DatabaseError
     >;
-    removeItem: (
-      itemId: string,
-    ) => Effect.Effect<void, CartItemNotFound | DatabaseError>;
+    removeItem: (data: {
+      cartId: string;
+      itemId: string;
+    }) => Effect.Effect<void, CartItemNotFound | DatabaseError>;
     clear: (cartId: string) => Effect.Effect<void, DatabaseError>;
     attachUser: (
       cartId: string,
@@ -147,9 +149,10 @@ export const CartRepositoryLive = Layer.effect(
           const variant = yield* tryDb(() =>
             database.query.productVariants.findFirst({
               where: eq(productVariants.id, variantId),
+              with: { product: true },
             }),
           );
-          if (!variant) {
+          if (!variant || !variant.product?.active) {
             return yield* Effect.fail(new VariantNotFound({ variantId }));
           }
 
@@ -178,9 +181,17 @@ export const CartRepositoryLive = Layer.effect(
               const [row] = await database
                 .update(cartItems)
                 .set({ quantity: nextQty, updatedAt: new Date() })
-                .where(eq(cartItems.id, existing.id))
+                .where(
+                  and(
+                    eq(cartItems.id, existing.id),
+                    eq(cartItems.cartId, cartId),
+                  ),
+                )
                 .returning();
-              return row!;
+              if (!row) {
+                throw new Error("Failed to update cart item");
+              }
+              return row;
             });
           }
 
@@ -194,15 +205,21 @@ export const CartRepositoryLive = Layer.effect(
                 quantity,
               })
               .returning();
-            return row!;
+            if (!row) {
+              throw new Error("Failed to insert cart item");
+            }
+            return row;
           });
         }),
 
-      updateItemQuantity: ({ itemId, quantity }) =>
+      updateItemQuantity: ({ cartId, itemId, quantity }) =>
         Effect.gen(function* () {
           const item = yield* tryDb(() =>
             database.query.cartItems.findFirst({
-              where: eq(cartItems.id, itemId),
+              where: and(
+                eq(cartItems.id, itemId),
+                eq(cartItems.cartId, cartId),
+              ),
               with: { variant: true },
             }),
           );
@@ -212,7 +229,11 @@ export const CartRepositoryLive = Layer.effect(
 
           if (quantity === 0) {
             yield* tryDb(async () => {
-              await database.delete(cartItems).where(eq(cartItems.id, itemId));
+              await database
+                .delete(cartItems)
+                .where(
+                  and(eq(cartItems.id, itemId), eq(cartItems.cartId, cartId)),
+                );
             });
             return null;
           }
@@ -231,24 +252,36 @@ export const CartRepositoryLive = Layer.effect(
             const [row] = await database
               .update(cartItems)
               .set({ quantity, updatedAt: new Date() })
-              .where(eq(cartItems.id, itemId))
+              .where(
+                and(eq(cartItems.id, itemId), eq(cartItems.cartId, cartId)),
+              )
               .returning();
-            return row!;
+            if (!row) {
+              throw new Error("Failed to update cart item");
+            }
+            return row;
           });
         }),
 
-      removeItem: (itemId) =>
+      removeItem: ({ cartId, itemId }) =>
         Effect.gen(function* () {
           const item = yield* tryDb(() =>
             database.query.cartItems.findFirst({
-              where: eq(cartItems.id, itemId),
+              where: and(
+                eq(cartItems.id, itemId),
+                eq(cartItems.cartId, cartId),
+              ),
             }),
           );
           if (!item) {
             return yield* Effect.fail(new CartItemNotFound({ itemId }));
           }
           yield* tryDb(async () => {
-            await database.delete(cartItems).where(eq(cartItems.id, itemId));
+            await database
+              .delete(cartItems)
+              .where(
+                and(eq(cartItems.id, itemId), eq(cartItems.cartId, cartId)),
+              );
           });
         }),
 

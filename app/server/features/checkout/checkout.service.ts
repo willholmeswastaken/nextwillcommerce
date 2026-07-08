@@ -17,10 +17,11 @@ import {
   Unauthorized,
   VariantNotFound,
 } from "@/app/server/lib/errors";
+import { orderAccessTokensEqual } from "@/lib/order-access";
 
 export type CheckoutResult =
-  | { provider: "stripe"; url: string; orderId: string }
-  | { provider: "mock"; orderId: string };
+  | { provider: "stripe"; url: string; orderId: string; accessToken: string }
+  | { provider: "mock"; orderId: string; accessToken: string };
 
 type CheckoutFail =
   | CartNotFound
@@ -32,6 +33,17 @@ type CheckoutFail =
   | VariantNotFound
   | DatabaseError;
 
+function allowMockCheckout(): boolean {
+  if (process.env.ALLOW_MOCK_CHECKOUT === "true") return true;
+  return process.env.NODE_ENV !== "production";
+}
+
+function getStripe(): Stripe | null {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key) return null;
+  return new Stripe(key);
+}
+
 export class CheckoutService extends Context.Tag("CheckoutService")<
   CheckoutService,
   {
@@ -42,18 +54,19 @@ export class CheckoutService extends Context.Tag("CheckoutService")<
     getOrder: (
       orderId: string,
     ) => Effect.Effect<OrderWithItems, OrderNotFound | DatabaseError>;
+    getOrderForConfirmation: (
+      orderId: string,
+      accessToken: string,
+    ) => Effect.Effect<
+      OrderWithItems,
+      OrderNotFound | Unauthorized | DatabaseError
+    >;
     listMyOrders: () => Effect.Effect<
       OrderWithItems[],
       Unauthorized | DatabaseError
     >;
   }
 >() {}
-
-function getStripe(): Stripe | null {
-  const key = process.env.STRIPE_SECRET_KEY;
-  if (!key) return null;
-  return new Stripe(key);
-}
 
 export const CheckoutServiceLive = Layer.effect(
   CheckoutService,
@@ -68,6 +81,28 @@ export const CheckoutServiceLive = Layer.effect(
           const cart = yield* cartService.getCart();
           if (!cart || cart.items.length === 0) {
             return yield* Effect.fail(new CartNotFound({}));
+          }
+
+          // Reject inactive products before payment.
+          for (const item of cart.items) {
+            if (!item.variant.product.active) {
+              return yield* Effect.fail(
+                new OutOfStock({
+                  variantId: item.variantId,
+                  available: 0,
+                  requested: item.quantity,
+                }),
+              );
+            }
+            if (item.variant.inventory < item.quantity) {
+              return yield* Effect.fail(
+                new OutOfStock({
+                  variantId: item.variantId,
+                  available: item.variant.inventory,
+                  requested: item.quantity,
+                }),
+              );
+            }
           }
 
           const session = yield* auth.getSession();
@@ -136,7 +171,17 @@ export const CheckoutServiceLive = Layer.effect(
               provider: "stripe" as const,
               url: checkoutSession.url,
               orderId: order.id,
+              accessToken: order.accessToken,
             };
+          }
+
+          if (!allowMockCheckout()) {
+            return yield* Effect.fail(
+              new CheckoutError({
+                message:
+                  "Payments are not configured. Set STRIPE_SECRET_KEY or ALLOW_MOCK_CHECKOUT=true.",
+              }),
+            );
           }
 
           const order = yield* orders.create({
@@ -154,9 +199,13 @@ export const CheckoutServiceLive = Layer.effect(
             })),
           });
 
-          yield* cartService.clear();
+          yield* orders.clearCartById(cart.id);
 
-          return { provider: "mock" as const, orderId: order.id };
+          return {
+            provider: "mock" as const,
+            orderId: order.id,
+            accessToken: order.accessToken,
+          };
         }),
 
       fulfillStripeSession: (sessionId) =>
@@ -195,12 +244,39 @@ export const CheckoutServiceLive = Layer.effect(
             );
           }
 
-          yield* orders.markPaid(existing.id);
-          yield* cartService.clear();
-          return yield* orders.getById(existing.id);
+          if (
+            typeof session.amount_total === "number" &&
+            session.amount_total !== existing.totalCents
+          ) {
+            return yield* Effect.fail(
+              new CheckoutError({
+                message: "Paid amount does not match order total",
+              }),
+            );
+          }
+
+          const paid = yield* orders.markPaidAndDecrementInventory(existing.id);
+
+          const cartId = session.metadata?.cartId;
+          if (cartId) {
+            yield* orders.clearCartById(cartId);
+          }
+
+          return paid;
         }),
 
       getOrder: (orderId) => orders.getById(orderId),
+
+      getOrderForConfirmation: (orderId, accessToken) =>
+        Effect.gen(function* () {
+          const order = yield* orders.getById(orderId);
+          if (!orderAccessTokensEqual(order.accessToken, accessToken)) {
+            return yield* Effect.fail(
+              new Unauthorized({ message: "Invalid order access token" }),
+            );
+          }
+          return order;
+        }),
 
       listMyOrders: () =>
         Effect.gen(function* () {

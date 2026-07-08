@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
+import { safeRedirectPath } from "@/lib/safe-redirect";
 
 /**
  * Optimistic auth gate for /account/* — cookie existence only.
@@ -9,7 +10,8 @@ export function proxy(request: NextRequest) {
   const sessionCookie = getSessionCookie(request);
   if (!sessionCookie) {
     const url = new URL("/sign-in", request.url);
-    url.searchParams.set("next", request.nextUrl.pathname);
+    const next = safeRedirectPath(request.nextUrl.pathname, "/account/orders");
+    url.searchParams.set("next", next);
     return NextResponse.redirect(url);
   }
   return NextResponse.next();

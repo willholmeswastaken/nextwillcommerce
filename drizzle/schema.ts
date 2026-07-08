@@ -176,12 +176,15 @@ export const orders = pgTable(
     currency: text("currency").notNull().default("USD"),
     stripeSessionId: text("stripe_session_id"),
     paymentProvider: text("payment_provider").notNull().default("mock"),
+    /** Opaque bearer for guest confirmation URLs — never treat order id alone as auth. */
+    accessToken: text("access_token").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },
   (t) => [
     index("orders_user_id_idx").on(t.userId),
     index("orders_stripe_session_id_idx").on(t.stripeSessionId),
+    uniqueIndex("orders_access_token_uidx").on(t.accessToken),
   ],
 );
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Effect } from "effect";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
+import { updateTag } from "next/cache";
 import { runtime } from "@/app/server/runtime";
 import { CheckoutService } from "@/app/server/features/checkout/checkout.service";
 import { formatMoney } from "@/lib/utils";
@@ -18,24 +19,33 @@ async function ConfirmationContent({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ provider?: string }>;
+  searchParams: Promise<{ provider?: string; token?: string }>;
 }) {
   await connection();
   const { id } = await params;
-  const { provider } = await searchParams;
+  const { provider, token } = await searchParams;
 
   const order = await runtime.runPromise(
     Effect.gen(function* () {
       const checkout = yield* CheckoutService;
       if (provider === "stripe") {
+        // Stripe success URL uses the Checkout Session id; fulfillment is
+        // idempotent and also runs from the webhook.
         return yield* checkout.fulfillStripeSession(id);
       }
-      return yield* checkout.getOrder(id);
+      if (!token) {
+        return yield* Effect.fail(new Error("missing token"));
+      }
+      return yield* checkout.getOrderForConfirmation(id, token);
     }).pipe(Effect.catchAll(() => Effect.succeed(null))),
   );
 
   if (!order) {
     notFound();
+  }
+
+  if (provider === "stripe") {
+    updateTag("products");
   }
 
   return (
@@ -98,7 +108,7 @@ export default function OrderConfirmationPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ provider?: string }>;
+  searchParams: Promise<{ provider?: string; token?: string }>;
 }) {
   return (
     <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6">

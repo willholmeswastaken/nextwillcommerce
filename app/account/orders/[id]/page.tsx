@@ -39,7 +39,8 @@ async function OrderDetailContent({
   }
 
   const { session, order } = result;
-  if (order.userId && order.userId !== session.user.id) {
+  // Guest orders (userId null) are not visible in the account area.
+  if (!order.userId || order.userId !== session.user.id) {
     notFound();
   }
 

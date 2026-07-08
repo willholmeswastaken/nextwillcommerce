@@ -57,11 +57,23 @@ export type ActionResult<T> =
 export function toActionError(error: unknown): ActionResult<never> {
   if (error && typeof error === "object" && "_tag" in error) {
     const tagged = error as { _tag: string; message?: string };
+    const safeMessages: Record<string, string> = {
+      OutOfStock: "Not enough inventory for one or more items",
+      CartNotFound: "Cart not found",
+      CartItemNotFound: "Cart item not found",
+      VariantNotFound: "Product variant not found",
+      ProductNotFound: "Product not found",
+      OrderNotFound: "Order not found",
+      Unauthorized: "Please sign in to continue",
+      ValidationError: tagged.message ?? "Invalid input",
+      CheckoutError: tagged.message ?? "Checkout failed",
+      DatabaseError: "Something went wrong. Please try again.",
+    };
     return {
       success: false,
       error: {
         type: tagged._tag,
-        message: tagged.message ?? tagged._tag,
+        message: safeMessages[tagged._tag] ?? "Something went wrong",
       },
     };
   }
@@ -69,7 +81,7 @@ export function toActionError(error: unknown): ActionResult<never> {
     success: false,
     error: {
       type: "UnknownError",
-      message: error instanceof Error ? error.message : "Something went wrong",
+      message: "Something went wrong",
     },
   };
 }
@@ -86,10 +98,15 @@ export const UpdateCartItemSchema = Schema.Struct({
   quantity: Schema.Number.pipe(Schema.int(), Schema.nonNegative()),
 });
 
+export const RemoveCartItemSchema = Schema.Struct({
+  itemId: Schema.String.pipe(Schema.minLength(1)),
+});
+
 export const CheckoutSchema = Schema.Struct({
   email: Schema.String.pipe(Schema.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)),
 });
 
 export type AddToCartInput = Schema.Schema.Type<typeof AddToCartSchema>;
 export type UpdateCartItemInput = Schema.Schema.Type<typeof UpdateCartItemSchema>;
+export type RemoveCartItemInput = Schema.Schema.Type<typeof RemoveCartItemSchema>;
 export type CheckoutInput = Schema.Schema.Type<typeof CheckoutSchema>;
