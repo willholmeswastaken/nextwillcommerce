@@ -6,8 +6,14 @@ import { runtime } from "@/app/server/runtime";
 import { CartService } from "@/app/server/features/cart/cart.service";
 import { AuthService } from "@/app/server/features/auth/auth.service";
 import { CheckoutForm } from "@/components/checkout-form";
+import { CheckoutSkeleton } from "@/components/skeletons";
 import { formatMoney } from "@/lib/utils";
 
+/**
+ * Instant Navigations demo — Stream strategy.
+ * Static shell (title) commits immediately; cart + payment stream after
+ * connection(). Confirmation uses Block instead for authoritative paid state.
+ */
 async function CheckoutContent() {
   await connection();
   const { cart, session } = await runtime.runPromise(
@@ -78,14 +84,11 @@ export default function CheckoutPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">Checkout</h1>
         <p className="mt-2 text-sm text-muted">
-          Stream strategy — payment form streams after cart resolution.
+          Instant Navigations demo — Stream strategy: shell first, payment form
+          streams in.
         </p>
       </div>
-      <Suspense
-        fallback={
-          <div className="h-64 animate-pulse rounded-3xl bg-border/50" />
-        }
-      >
+      <Suspense fallback={<CheckoutSkeleton />}>
         <CheckoutContent />
       </Suspense>
     </div>

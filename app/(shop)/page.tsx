@@ -1,25 +1,10 @@
-import { Suspense } from "react";
 import Link from "next/link";
 import { getFeaturedProducts } from "@/app/(shop)/catalog";
 import { ProductCard } from "@/components/product-card";
-import { ProductGridSkeleton } from "@/components/skeletons";
 
-async function FeaturedGrid() {
+export default async function HomePage() {
   const products = await getFeaturedProducts();
-  return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {products.map((product, index) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          priority={index < 3}
-        />
-      ))}
-    </div>
-  );
-}
 
-export default function HomePage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
       <section className="overflow-hidden rounded-[2rem] border border-border bg-card px-6 py-12 sm:px-10 sm:py-16">
@@ -60,16 +45,22 @@ export default function HomePage() {
               Featured products
             </h2>
             <p className="text-sm text-muted">
-              Served from cached catalog queries for instant navigations.
+              Served from cached catalog queries.
             </p>
           </div>
           <Link href="/products" className="text-sm text-accent underline">
             View all
           </Link>
         </div>
-        <Suspense fallback={<ProductGridSkeleton count={6} />}>
-          <FeaturedGrid />
-        </Suspense>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {products.map((product, index) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              priority={index < 3}
+            />
+          ))}
+        </div>
       </section>
     </div>
   );

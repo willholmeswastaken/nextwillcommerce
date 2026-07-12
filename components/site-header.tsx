@@ -38,6 +38,18 @@ async function AccountLink() {
   );
 }
 
+/** Stable chrome while auth resolves — no pulse flash. */
+function AccountLinkFallback() {
+  return (
+    <Link
+      href="/sign-in"
+      className="inline-flex h-10 items-center rounded-full border border-border bg-card px-4 text-sm transition hover:bg-accent-soft"
+    >
+      Sign in
+    </Link>
+  );
+}
+
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-border/80 bg-background/80 backdrop-blur-xl">
@@ -71,11 +83,7 @@ export function SiteHeader() {
           </nav>
         </div>
         <div className="flex items-center gap-2">
-          <Suspense
-            fallback={
-              <div className="h-10 w-10 animate-pulse rounded-full bg-border/50" />
-            }
-          >
+          <Suspense fallback={<AccountLinkFallback />}>
             <AccountLink />
           </Suspense>
           <CartBadgeButton />

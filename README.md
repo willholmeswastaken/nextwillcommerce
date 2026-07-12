@@ -85,10 +85,12 @@ cacheComponents: true,
 partialPrefetching: true,
 ```
 
+Most storefront routes use the **Cache** strategy so navigations feel fully populated. Checkout demos **Stream**; confirmation uses **Block** for correctness:
+
 | Route | Strategy | Why |
 |-------|----------|-----|
-| `/`, `/products`, `/products/[slug]` | **Cache** (`'use cache'` + tags) | Catalog is mostly static |
-| `/cart`, `/checkout` | **Stream** (Suspense shells) | User-specific, changes often |
+| `/`, `/products`, `/products/[slug]` | **Cache** (`'use cache'` + tags) | Catalog is mostly static — await cached data, no skeleton demos |
+| `/checkout` | **Stream** (Suspense shell) | Demo route — shell first, cart + payment stream in |
 | `/order/confirmation/[id]` | **Block** (`export const instant = false`) | Must show authoritative paid state |
 
 Catalog queries live in `app/(shop)/catalog.ts` and never read cookies/headers inside `'use cache'`. Session reads happen outside cache boundaries; pass `userId` in when needed.
@@ -129,8 +131,8 @@ pnpm test:e2e     # Playwright storefront flow
 ## Performance playbook
 
 1. Prefer Server Components; keep `'use client'` to interactive islands only
-2. Wrap slow sections in `<Suspense>` with layout-matched skeletons
-3. Cache catalog with `'use cache'` + `cacheTag` / `updateTag`
+2. Cache catalog with `'use cache'` + `cacheTag` / `updateTag` — await it when possible so pages paint fully populated
+3. Use `<Suspense>` only for runtime data (`params`, `searchParams`, `connection()`); avoid stacking `loading.tsx` + nested skeletons on catalog routes
 4. One shell per route (Partial Prefetching) — use `<Link prefetch>` for deeper per-link prefetch
 5. Never call `auth.api.getSession()` inside cached functions
 6. Parallelize independent Effect fibers / promises on page load
