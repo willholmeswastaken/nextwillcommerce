@@ -83,8 +83,7 @@ export default function OrderConfirmationPage({
           <div className="space-y-8">
             <div className="mx-auto h-14 w-14 animate-pulse rounded-full bg-border/60" />
             <div className="mx-auto h-8 w-64 animate-pulse rounded bg-border/50" />
-            <div className="aspect-[4/5] animate-pulse rounded-[1.75rem] bg-border/50" />
-            <div className="h-48 animate-pulse rounded-[1.75rem] bg-border/40" />
+            <div className="h-64 animate-pulse rounded-[1.75rem] bg-border/40" />
           </div>
         }
       >

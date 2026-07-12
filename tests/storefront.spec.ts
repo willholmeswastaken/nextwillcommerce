@@ -41,7 +41,7 @@ test.describe("storefront", () => {
     await page.getByLabel("Email for receipt").fill("buyer@example.com");
     await page.getByRole("button", { name: /Complete mock checkout/i }).click();
 
-    await expect(page.getByText(/Thanks for your purchase/i)).toBeVisible({
+    await expect(page.getByRole("heading", { name: /Thanks for your purchase/i })).toBeVisible({
       timeout: 15_000,
     });
     await expect(page.getByRole("heading", { name: "Your items" })).toBeVisible();
