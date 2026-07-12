@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/app/(shop)/catalog";
 import { AddToCartForm } from "@/components/add-to-cart-form";
+import { ProductDetailSkeleton } from "@/components/skeletons";
 import { Badge } from "@/components/ui/badge";
 
 export const prefetch = "allow-runtime";
@@ -55,20 +56,6 @@ async function ProductDetails({
   );
 }
 
-function ProductFallback() {
-  return (
-    <div data-testid="product-shell" className="grid gap-10 lg:grid-cols-2">
-      <div className="aspect-[4/5] animate-pulse rounded-[2rem] bg-border/60" />
-      <div className="space-y-4 py-8">
-        <div className="h-6 w-24 animate-pulse rounded bg-border/60" />
-        <div className="h-10 w-2/3 animate-pulse rounded bg-border/60" />
-        <div className="h-24 w-full animate-pulse rounded bg-border/50" />
-        <div className="h-12 w-40 animate-pulse rounded-full bg-border/60" />
-      </div>
-    </div>
-  );
-}
-
 export default function ProductPage({
   params,
 }: {
@@ -76,11 +63,8 @@ export default function ProductPage({
 }) {
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
-      {/*
-        Instant Navigations: Stream strategy.
-        Params are awaited in a Suspense child so the route shell stays instant.
-      */}
-      <Suspense fallback={<ProductFallback />}>
+      {/* params must sit in Suspense for Cache Components; catalog data is cached. */}
+      <Suspense fallback={<ProductDetailSkeleton />}>
         <ProductDetails params={params} />
       </Suspense>
     </div>

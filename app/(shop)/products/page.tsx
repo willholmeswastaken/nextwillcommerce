@@ -2,83 +2,59 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { getCategories, getProducts } from "@/app/(shop)/catalog";
 import { ProductCard } from "@/components/product-card";
-import { ProductGridSkeleton } from "@/components/skeletons";
-
-async function CategoryFilters({
-  active,
-}: {
-  active?: string;
-}) {
-  const categories = await getCategories();
-  return (
-    <div className="flex flex-wrap gap-2">
-      <Link
-        href="/products"
-        className={`rounded-full border px-4 py-2 text-sm ${
-          !active
-            ? "border-accent bg-accent text-accent-foreground"
-            : "border-border bg-card hover:bg-accent-soft"
-        }`}
-      >
-        All
-      </Link>
-      {categories.map((category) => (
-        <Link
-          key={category.id}
-          href={`/products?category=${category.slug}`}
-          className={`rounded-full border px-4 py-2 text-sm ${
-            active === category.slug
-              ? "border-accent bg-accent text-accent-foreground"
-              : "border-border bg-card hover:bg-accent-soft"
-          }`}
-        >
-          {category.name}
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-async function ProductGrid({ category }: { category?: string }) {
-  const products = await getProducts(category);
-  if (products.length === 0) {
-    return (
-      <div className="rounded-3xl border border-dashed border-border p-10 text-center text-muted">
-        No products in this category yet.
-      </div>
-    );
-  }
-  return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </div>
-  );
-}
+import { ProductsListingSkeleton } from "@/components/skeletons";
 
 async function ProductsContent({
   searchParams,
 }: {
   searchParams: Promise<{ category?: string }>;
 }) {
-  const params = await searchParams;
-  const category = params.category;
+  const { category } = await searchParams;
+  const [categories, products] = await Promise.all([
+    getCategories(),
+    getProducts(category),
+  ]);
 
   return (
     <>
-      <Suspense
-        fallback={
-          <div className="mb-8 h-10 w-full animate-pulse rounded-full bg-border/50" />
-        }
-      >
-        <CategoryFilters active={category} />
-      </Suspense>
+      <div className="flex flex-wrap gap-2">
+        <Link
+          href="/products"
+          className={`rounded-full border px-4 py-2 text-sm ${
+            !category
+              ? "border-accent bg-accent text-accent-foreground"
+              : "border-border bg-card hover:bg-accent-soft"
+          }`}
+        >
+          All
+        </Link>
+        {categories.map((cat) => (
+          <Link
+            key={cat.id}
+            href={`/products?category=${cat.slug}`}
+            className={`rounded-full border px-4 py-2 text-sm ${
+              category === cat.slug
+                ? "border-accent bg-accent text-accent-foreground"
+                : "border-border bg-card hover:bg-accent-soft"
+            }`}
+          >
+            {cat.name}
+          </Link>
+        ))}
+      </div>
 
       <div className="mt-8">
-        <Suspense fallback={<ProductGridSkeleton />}>
-          <ProductGrid category={category} />
-        </Suspense>
+        {products.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-border p-10 text-center text-muted">
+            No products in this category yet.
+          </div>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
       </div>
     </>
   );
@@ -94,11 +70,11 @@ export default function ProductsPage({
       <div className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">Shop</h1>
         <p className="mt-2 text-muted">
-          Catalog pages use Cache + Suspense so navigations commit instantly.
+          Browse the catalog — cached for instant navigations.
         </p>
       </div>
 
-      <Suspense fallback={<ProductGridSkeleton />}>
+      <Suspense fallback={<ProductsListingSkeleton />}>
         <ProductsContent searchParams={searchParams} />
       </Suspense>
     </div>

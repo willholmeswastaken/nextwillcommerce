@@ -5,8 +5,9 @@ import { runtime } from "@/app/server/runtime";
 import { ProductService } from "@/app/server/features/product/product.service";
 
 /**
- * Cached catalog queries — Instant Navigations strategy: Cache.
- * These run outside request cookies/headers so shells stay instant.
+ * Cached catalog queries — Instant Navigations Cache strategy.
+ * No cookies/headers inside `'use cache'` so catalog pages can await
+ * and render fully populated (see `/cart` for the Stream demo).
  */
 export async function getFeaturedProducts() {
   "use cache";
