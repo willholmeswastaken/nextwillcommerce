@@ -1,9 +1,11 @@
 "use client";
 
-import { useOptimistic, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
+import { Check, Loader2 } from "lucide-react";
 import { addToCartAction } from "@/app/(shop)/actions";
+import { useCart } from "@/components/cart-provider";
 import { Button } from "@/components/ui/button";
-import { formatMoney } from "@/lib/utils";
+import { formatMoney, cn } from "@/lib/utils";
 import type { ProductVariant } from "@/drizzle/schema";
 
 export function AddToCartForm({
@@ -14,14 +16,13 @@ export function AddToCartForm({
   productName: string;
 }) {
   const [selectedId, setSelectedId] = useState(variants[0]?.id ?? "");
-  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [justAdded, setJustAdded] = useState(false);
   const [pending, startTransition] = useTransition();
-  const [optimisticLabel, setOptimisticLabel] = useOptimistic(
-    "Add to cart",
-    (_current, next: string) => next,
-  );
+  const { openWithCart } = useCart();
 
   const selected = variants.find((v) => v.id === selectedId) ?? variants[0];
+  const outOfStock = !selected || selected.inventory < 1;
 
   return (
     <div className="space-y-5">
@@ -34,12 +35,17 @@ export function AddToCartForm({
               <button
                 key={variant.id}
                 type="button"
-                onClick={() => setSelectedId(variant.id)}
-                className={`rounded-full border px-4 py-2 text-sm transition ${
+                onClick={() => {
+                  setSelectedId(variant.id);
+                  setError(null);
+                  setJustAdded(false);
+                }}
+                className={cn(
+                  "rounded-full border px-4 py-2 text-sm transition",
                   active
                     ? "border-accent bg-accent text-accent-foreground"
-                    : "border-border bg-card hover:bg-accent-soft"
-                }`}
+                    : "border-border bg-card hover:bg-accent-soft",
+                )}
               >
                 {variant.name}
               </button>
@@ -63,32 +69,65 @@ export function AddToCartForm({
         </div>
         <Button
           size="lg"
-          disabled={!selected || selected.inventory < 1 || pending}
+          className={cn(
+            "min-w-[10.5rem] transition-all duration-300",
+            justAdded && "bg-accent shadow-[0_12px_28px_-14px_rgba(15,118,110,0.7)]",
+          )}
+          disabled={outOfStock || pending}
+          aria-busy={pending}
           onClick={() => {
             if (!selected) return;
+            setError(null);
+            setJustAdded(false);
             startTransition(async () => {
-              setOptimisticLabel("Adding…");
               const result = await addToCartAction({
                 variantId: selected.id,
                 quantity: 1,
               });
               if (result.success) {
-                setMessage(`${productName} added to cart`);
+                setJustAdded(true);
+                openWithCart(result.data, { variantId: selected.id });
+                window.setTimeout(() => setJustAdded(false), 1600);
               } else {
-                setMessage(result.error.message);
+                setError(result.error.message);
               }
             });
           }}
         >
-          {pending ? optimisticLabel : "Add to cart"}
+          <span className="relative inline-flex h-5 items-center justify-center">
+            {pending ? (
+              <span className="inline-flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                <span>Adding…</span>
+              </span>
+            ) : justAdded ? (
+              <span className="inline-flex items-center gap-2 animate-cart-confirm">
+                <Check className="h-4 w-4" aria-hidden />
+                <span>Added</span>
+              </span>
+            ) : (
+              <span>Add to cart</span>
+            )}
+          </span>
         </Button>
       </div>
 
-      {message ? (
-        <p className="rounded-xl bg-accent-soft px-4 py-3 text-sm text-accent">
-          {message}
+      {error ? (
+        <p
+          role="alert"
+          className="rounded-xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger"
+        >
+          {error}
         </p>
       ) : null}
+
+      <span className="sr-only" aria-live="polite">
+        {pending
+          ? `Adding ${productName} to cart`
+          : justAdded
+            ? `${productName} added to cart`
+            : ""}
+      </span>
     </div>
   );
 }

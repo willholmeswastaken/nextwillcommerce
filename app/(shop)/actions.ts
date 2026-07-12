@@ -18,6 +18,15 @@ function revalidateCartUi() {
   revalidatePath("/", "layout");
 }
 
+export async function getCartAction() {
+  return runAction(
+    Effect.gen(function* () {
+      const cart = yield* CartService;
+      return yield* cart.getOrCreateCart();
+    }),
+  );
+}
+
 export async function addToCartAction(input: unknown) {
   const result = await runAction(
     Effect.gen(function* () {

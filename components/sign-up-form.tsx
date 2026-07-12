@@ -7,9 +7,11 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { mergeCartOnLoginAction } from "@/app/(auth)/actions";
+import { useCartOptional } from "@/components/cart-provider";
 
 export function SignUpForm() {
   const router = useRouter();
+  const cart = useCartOptional();
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -33,7 +35,12 @@ export function SignUpForm() {
             setError(signUpError.message ?? "Unable to create account");
             return;
           }
-          await mergeCartOnLoginAction();
+          const mergeResult = await mergeCartOnLoginAction();
+          if (mergeResult.success) {
+            cart?.setCart(mergeResult.data);
+          } else {
+            await cart?.refresh();
+          }
           router.push("/account/orders");
           router.refresh();
         });

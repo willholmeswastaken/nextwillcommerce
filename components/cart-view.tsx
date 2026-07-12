@@ -7,13 +7,19 @@ import {
   removeCartItemAction,
   updateCartItemAction,
 } from "@/app/(shop)/actions";
+import { useCartOptional } from "@/components/cart-provider";
 import { formatMoney } from "@/lib/utils";
 import type { CartWithItems } from "@/app/server/features/cart/cart.repository";
 
 export function CartView({ cart }: { cart: CartWithItems }) {
+  const cartUi = useCartOptional();
   const [optimisticCart, setOptimisticCart] = useOptimistic(cart);
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+
+  const syncCart = (next: CartWithItems) => {
+    cartUi?.setCart(next);
+  };
 
   if (optimisticCart.items.length === 0) {
     return (
@@ -102,7 +108,9 @@ export function CartView({ cart }: { cart: CartWithItems }) {
                           itemId: item.id,
                           quantity: next,
                         });
-                        if (!result.success) {
+                        if (result.success) {
+                          syncCart(result.data);
+                        } else {
                           setError(result.error.message);
                         }
                       });
@@ -134,7 +142,9 @@ export function CartView({ cart }: { cart: CartWithItems }) {
                           itemId: item.id,
                           quantity: item.quantity + 1,
                         });
-                        if (!result.success) {
+                        if (result.success) {
+                          syncCart(result.data);
+                        } else {
                           setError(result.error.message);
                         }
                       });
@@ -168,7 +178,9 @@ export function CartView({ cart }: { cart: CartWithItems }) {
                       const result = await removeCartItemAction({
                         itemId: item.id,
                       });
-                      if (!result.success) {
+                      if (result.success) {
+                        syncCart(result.data);
+                      } else {
                         setError(result.error.message);
                       }
                     });

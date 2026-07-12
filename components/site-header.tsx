@@ -1,37 +1,11 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { ShoppingBag, UserRound } from "lucide-react";
+import { UserRound } from "lucide-react";
 import { Effect } from "effect";
 import { runtime } from "@/app/server/runtime";
-import { CartService } from "@/app/server/features/cart/cart.service";
 import { AuthService } from "@/app/server/features/auth/auth.service";
-
-async function CartBadge() {
-  await connection();
-  const cart = await runtime.runPromise(
-    Effect.gen(function* () {
-      const cartService = yield* CartService;
-      return yield* cartService.getCart();
-    }),
-  );
-  const count = cart?.itemCount ?? 0;
-
-  return (
-    <Link
-      href="/cart"
-      className="relative inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-card transition hover:bg-accent-soft"
-      aria-label={`Cart with ${count} items`}
-    >
-      <ShoppingBag className="h-4 w-4" />
-      {count > 0 ? (
-        <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1 text-[11px] font-semibold text-accent-foreground">
-          {count}
-        </span>
-      ) : null}
-    </Link>
-  );
-}
+import { CartBadgeButton } from "@/components/cart-badge-button";
 
 async function AccountLink() {
   await connection();
@@ -104,13 +78,7 @@ export function SiteHeader() {
           >
             <AccountLink />
           </Suspense>
-          <Suspense
-            fallback={
-              <div className="h-10 w-10 animate-pulse rounded-full bg-border/50" />
-            }
-          >
-            <CartBadge />
-          </Suspense>
+          <CartBadgeButton />
         </div>
       </div>
     </header>

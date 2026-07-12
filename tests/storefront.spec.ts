@@ -25,7 +25,11 @@ test.describe("storefront", () => {
   test("add to cart and mock checkout", async ({ page }) => {
     await page.goto("/products/aero-runner");
     await page.getByRole("button", { name: "Add to cart" }).click();
-    await expect(page.getByText(/added to cart/i)).toBeVisible();
+
+    const cartDrawer = page.getByRole("dialog", { name: "Your cart" });
+    await expect(cartDrawer).toBeVisible();
+    await expect(cartDrawer.getByText("Aero Runner")).toBeVisible();
+    await expect(page.getByText(/added to cart/i)).toBeAttached();
 
     await page.goto("/cart");
     await expect(page.getByRole("heading", { name: "Cart" })).toBeVisible();
