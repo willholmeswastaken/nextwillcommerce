@@ -6,11 +6,6 @@ import { CartService } from "@/app/server/features/cart/cart.service";
 import { CartView } from "@/components/cart-view";
 import { CartSkeleton } from "@/components/skeletons";
 
-/**
- * Instant Navigations demo — Stream strategy.
- * Static shell commits immediately; cart lines stream after connection().
- * Other storefront routes prefer Cache so navigations feel fully populated.
- */
 async function CartContent() {
   await connection();
   const cart = await runtime.runPromise(
@@ -29,8 +24,8 @@ export default function CartPage() {
       <div className="mb-8">
         <h1 className="text-3xl font-semibold tracking-tight">Cart</h1>
         <p className="mt-2 text-sm text-muted">
-          Instant Navigations demo — Stream strategy: shell first, cart lines
-          stream in.
+          Prefer the cart drawer from the header — this page remains as a
+          fallback.
         </p>
       </div>
       <Suspense fallback={<CartSkeleton />}>

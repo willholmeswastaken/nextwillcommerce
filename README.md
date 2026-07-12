@@ -85,12 +85,12 @@ cacheComponents: true,
 partialPrefetching: true,
 ```
 
-Most storefront routes use the **Cache** strategy so navigations feel fully populated. One route demos **Stream**; confirmation uses **Block** for correctness:
+Most storefront routes use the **Cache** strategy so navigations feel fully populated. Checkout demos **Stream**; confirmation uses **Block** for correctness:
 
 | Route | Strategy | Why |
 |-------|----------|-----|
 | `/`, `/products`, `/products/[slug]` | **Cache** (`'use cache'` + tags) | Catalog is mostly static — await cached data, no skeleton demos |
-| `/cart` | **Stream** (Suspense shell) | Demo route — shell first, user cart streams in |
+| `/checkout` | **Stream** (Suspense shell) | Demo route — shell first, cart + payment stream in |
 | `/order/confirmation/[id]` | **Block** (`export const instant = false`) | Must show authoritative paid state |
 
 Catalog queries live in `app/(shop)/catalog.ts` and never read cookies/headers inside `'use cache'`. Session reads happen outside cache boundaries; pass `userId` in when needed.

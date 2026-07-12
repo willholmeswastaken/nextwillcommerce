@@ -112,3 +112,33 @@ export function CartSkeleton() {
     </div>
   );
 }
+
+/** Matches /checkout: items column + payment column. */
+export function CheckoutSkeleton() {
+  return (
+    <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr]">
+      <div className="rounded-3xl border border-border bg-card p-6">
+        <div className="h-6 w-16 animate-pulse rounded bg-border/60" />
+        <ul className="mt-4 space-y-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <li
+              key={i}
+              className="flex items-center justify-between gap-3"
+            >
+              <div className="h-4 w-2/3 animate-pulse rounded bg-border/50" />
+              <div className="h-4 w-14 animate-pulse rounded bg-border/40" />
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="rounded-3xl border border-border bg-card p-6">
+        <div className="mb-4 h-6 w-20 animate-pulse rounded bg-border/60" />
+        <div className="space-y-4">
+          <div className="h-11 w-full animate-pulse rounded-xl bg-border/50" />
+          <div className="h-11 w-full animate-pulse rounded-xl bg-border/45" />
+          <div className="h-12 w-full animate-pulse rounded-full bg-border/60" />
+        </div>
+      </div>
+    </div>
+  );
+}
