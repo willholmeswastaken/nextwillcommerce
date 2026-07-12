@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
@@ -59,18 +60,45 @@ async function OrderDetailContent({
           <span className="capitalize text-muted">{order.status}</span>
           <span className="font-semibold">{formatMoney(order.totalCents)}</span>
         </div>
-        <ul className="mt-6 space-y-3 text-sm">
-          {order.items.map((item) => (
-            <li
-              key={item.id}
-              className="flex items-center justify-between gap-3 border-t border-border pt-3"
-            >
-              <span>
-                {item.productName} · {item.variantName} × {item.quantity}
-              </span>
-              <span>{formatMoney(item.unitPriceCents * item.quantity)}</span>
-            </li>
-          ))}
+        <ul className="mt-6 space-y-4 text-sm">
+          {order.items.map((item) => {
+            const product = item.variant.product;
+            return (
+              <li
+                key={item.id}
+                className="flex items-center justify-between gap-3 border-t border-border pt-4"
+              >
+                <div className="flex min-w-0 items-center gap-3">
+                  <Link
+                    href={`/products/${product.slug}`}
+                    className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-accent-soft/40"
+                  >
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      fill
+                      sizes="56px"
+                      className="object-cover"
+                    />
+                  </Link>
+                  <div className="min-w-0">
+                    <Link
+                      href={`/products/${product.slug}`}
+                      className="font-medium hover:text-accent"
+                    >
+                      {item.productName}
+                    </Link>
+                    <p className="text-muted">
+                      {item.variantName} · Qty {item.quantity}
+                    </p>
+                  </div>
+                </div>
+                <span className="shrink-0 font-medium">
+                  {formatMoney(item.unitPriceCents * item.quantity)}
+                </span>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </>
