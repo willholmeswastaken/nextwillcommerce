@@ -38,6 +38,8 @@ export function SignUpForm() {
           const mergeResult = await mergeCartOnLoginAction();
           if (mergeResult.success) {
             cart?.setCart(mergeResult.data);
+          } else {
+            await cart?.refresh();
           }
           router.push("/account/orders");
           router.refresh();

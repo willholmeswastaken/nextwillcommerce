@@ -39,6 +39,8 @@ export function SignInForm() {
           const mergeResult = await mergeCartOnLoginAction();
           if (mergeResult.success) {
             cart?.setCart(mergeResult.data);
+          } else {
+            await cart?.refresh();
           }
           router.push(next);
           router.refresh();

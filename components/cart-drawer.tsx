@@ -114,7 +114,7 @@ export function CartDrawer() {
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col">
-          {isRefreshing ? (
+          {isRefreshing && !cart ? (
             <DrawerLoading />
           ) : !cart && loadError ? (
             <DrawerError
