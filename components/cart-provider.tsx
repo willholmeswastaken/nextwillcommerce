@@ -2,6 +2,7 @@
 
 import {
   createContext,
+  Suspense,
   useCallback,
   useContext,
   useMemo,
@@ -10,7 +11,7 @@ import {
   useTransition,
   type ReactNode,
 } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { getCartAction } from "@/app/(shop)/actions";
 import type { CartWithItems } from "@/app/server/features/cart/cart.repository";
 import { CartDrawer } from "@/components/cart-drawer";
@@ -57,22 +58,39 @@ function findHighlightItemId(
   return next.items[0]?.id ?? null;
 }
 
-export function CartProvider({
-  children,
-  initialCount = 0,
-  countReady = true,
-}: {
+type CartProviderProps = {
   children: ReactNode;
   initialCount?: number;
   /** Set false in Suspense fallbacks before the server cart count is known. */
   countReady?: boolean;
-}) {
+};
+
+/**
+ * Route hooks must sit under their own Suspense — this provider is also used
+ * as the root layout Suspense fallback, where usePathname would block prerender.
+ */
+export function CartProvider(props: CartProviderProps) {
+  return (
+    <Suspense fallback={<CartProviderTree {...props} routeKey={null} />}>
+      <CartProviderRouted {...props} />
+    </Suspense>
+  );
+}
+
+function CartProviderRouted(props: CartProviderProps) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const routeKey = `${pathname}?${searchParams.toString()}`;
+  return <CartProviderTree {...props} routeKey={pathname} />;
+}
+
+function CartProviderTree({
+  children,
+  initialCount = 0,
+  countReady = true,
+  routeKey,
+}: CartProviderProps & { routeKey: string | null }) {
   /** Open only while this matches the current route — closes on navigation. */
   const [openedForRoute, setOpenedForRoute] = useState<string | null>(null);
-  const isOpen = openedForRoute === routeKey;
+  const isOpen = routeKey !== null && openedForRoute === routeKey;
   const [cart, setCartState] = useState<CartWithItems | null>(null);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(
     null,
@@ -109,6 +127,7 @@ export function CartProvider({
   }, []);
 
   const open = useCallback(() => {
+    if (routeKey === null) return;
     const fetchId = ++fetchIdRef.current;
     setHighlightedItemId(null);
     setLoadError(null);
@@ -133,6 +152,7 @@ export function CartProvider({
 
   const openWithCart = useCallback(
     (next: CartWithItems, options?: OpenWithCartOptions) => {
+      if (routeKey === null) return;
       fetchIdRef.current += 1;
       setCartState(next);
       setLoadError(null);
