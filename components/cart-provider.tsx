@@ -10,6 +10,7 @@ import {
   useTransition,
   type ReactNode,
 } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { getCartAction } from "@/app/(shop)/actions";
 import type { CartWithItems } from "@/app/server/features/cart/cart.repository";
 import { CartDrawer } from "@/components/cart-drawer";
@@ -32,7 +33,7 @@ type CartContextValue = {
   open: () => void;
   close: () => void;
   openWithCart: (cart: CartWithItems, options?: OpenWithCartOptions) => void;
-  setCart: (cart: CartWithItems) => void;
+  setCart: (cart: CartWithItems | null) => void;
   refresh: () => Promise<void>;
 };
 
@@ -66,25 +67,36 @@ export function CartProvider({
   /** Set false in Suspense fallbacks before the server cart count is known. */
   countReady?: boolean;
 }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const routeKey = `${pathname}?${searchParams.toString()}`;
+  /** Open only while this matches the current route — closes on navigation. */
+  const [openedForRoute, setOpenedForRoute] = useState<string | null>(null);
+  const isOpen = openedForRoute === routeKey;
   const [cart, setCartState] = useState<CartWithItems | null>(null);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(
     null,
   );
   const [loadError, setLoadError] = useState<string | null>(null);
   const [isRefreshing, startRefresh] = useTransition();
-  const cartRef = useRef(cart);
-  cartRef.current = cart;
+  /** Bumped to ignore out-of-order getCartAction responses. */
+  const fetchIdRef = useRef(0);
 
-  const setCart = useCallback((next: CartWithItems) => {
+  const setCart = useCallback((next: CartWithItems | null) => {
+    fetchIdRef.current += 1;
     setCartState(next);
     setLoadError(null);
   }, []);
 
   const refresh = useCallback(async () => {
+    const fetchId = ++fetchIdRef.current;
     return new Promise<void>((resolve) => {
       startRefresh(async () => {
         const result = await getCartAction();
+        if (fetchId !== fetchIdRef.current) {
+          resolve();
+          return;
+        }
         if (result.success) {
           setCartState(result.data);
           setLoadError(null);
@@ -97,11 +109,13 @@ export function CartProvider({
   }, []);
 
   const open = useCallback(() => {
+    const fetchId = ++fetchIdRef.current;
     setHighlightedItemId(null);
     setLoadError(null);
-    setIsOpen(true);
+    setOpenedForRoute(routeKey);
     startRefresh(async () => {
       const result = await getCartAction();
+      if (fetchId !== fetchIdRef.current) return;
       if (result.success) {
         setCartState(result.data);
         setLoadError(null);
@@ -109,22 +123,23 @@ export function CartProvider({
         setLoadError(result.error.message);
       }
     });
-  }, []);
+  }, [routeKey]);
 
   const close = useCallback(() => {
-    setIsOpen(false);
+    setOpenedForRoute(null);
     setHighlightedItemId(null);
     setLoadError(null);
   }, []);
 
   const openWithCart = useCallback(
     (next: CartWithItems, options?: OpenWithCartOptions) => {
+      fetchIdRef.current += 1;
       setCartState(next);
       setLoadError(null);
       setHighlightedItemId(findHighlightItemId(next, options));
-      setIsOpen(true);
+      setOpenedForRoute(routeKey);
     },
-    [],
+    [routeKey],
   );
 
   const itemCount = cart?.itemCount ?? initialCount;

@@ -18,9 +18,11 @@ export const auth = betterAuth({
     enabled: true,
   },
   secret: process.env.BETTER_AUTH_SECRET,
-  baseURL: process.env.VERCEL_BRANCH_URL 
-    ? `https://${process.env.VERCEL_BRANCH_URL}` 
-    : process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  baseURL:
+    process.env.BETTER_AUTH_URL ||
+    (process.env.VERCEL_BRANCH_URL
+      ? `https://${process.env.VERCEL_BRANCH_URL}`
+      : "http://localhost:3000"),
   plugins: [nextCookies()],
 });
 

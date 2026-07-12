@@ -7,15 +7,14 @@ import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { mergeCartOnLoginAction } from "@/app/(auth)/actions";
+import { useCartOptional } from "@/components/cart-provider";
 import { safeRedirectPath } from "@/lib/safe-redirect";
 
 export function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const next = safeRedirectPath(
-    searchParams.get("next"),
-    "/account/orders",
-  );
+  const cart = useCartOptional();
+  const next = safeRedirectPath(searchParams.get("next"), "/account/orders");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -37,7 +36,10 @@ export function SignInForm() {
             setError(signInError.message ?? "Unable to sign in");
             return;
           }
-          await mergeCartOnLoginAction();
+          const mergeResult = await mergeCartOnLoginAction();
+          if (mergeResult.success) {
+            cart?.setCart(mergeResult.data);
+          }
           router.push(next);
           router.refresh();
         });

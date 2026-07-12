@@ -2,7 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useId, useOptimistic, useRef, useState, useTransition } from "react";
+import {
+  useEffect,
+  useId,
+  useOptimistic,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { Loader2, ShoppingBag, X } from "lucide-react";
 import {
   removeCartItemAction,
@@ -85,10 +92,10 @@ export function CartDrawer() {
                 Your cart
               </h2>
               <p className="text-xs text-muted">
-                {cart
-                  ? `${cart.itemCount} ${cart.itemCount === 1 ? "item" : "items"}`
-                  : isRefreshing
-                    ? "Updating…"
+                {isRefreshing
+                  ? "Updating…"
+                  : cart
+                    ? `${cart.itemCount} ${cart.itemCount === 1 ? "item" : "items"}`
                     : loadError
                       ? "Couldn’t load cart"
                       : "Ready when you are"}
@@ -107,14 +114,22 @@ export function CartDrawer() {
         </div>
 
         <div className="flex min-h-0 flex-1 flex-col">
-          {!cart && isRefreshing ? (
+          {isRefreshing ? (
             <DrawerLoading />
           ) : !cart && loadError ? (
-            <DrawerError message={loadError} onRetry={refresh} pending={isRefreshing} />
+            <DrawerError
+              message={loadError}
+              onRetry={refresh}
+              pending={isRefreshing}
+            />
           ) : !cart || cart.items.length === 0 ? (
             <EmptyDrawer onClose={close} />
           ) : (
-            <DrawerContents cart={cart} onCartChange={setCart} onClose={close} />
+            <DrawerContents
+              cart={cart}
+              onCartChange={setCart}
+              onClose={close}
+            />
           )}
         </div>
       </div>
