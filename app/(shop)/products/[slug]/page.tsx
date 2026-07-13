@@ -5,7 +5,10 @@ import { AddToCartForm } from "@/components/add-to-cart-form";
 import { ProductImage } from "@/components/product-image";
 import { ProductDetailSkeleton } from "@/components/skeletons";
 import { Badge } from "@/components/ui/badge";
-import { PRODUCT_DETAIL_SIZES } from "@/lib/product-image";
+import {
+  PRODUCT_DETAIL_SIZES,
+  PRODUCT_IMAGE_FRAME_CLASSNAME,
+} from "@/lib/product-image";
 
 export const prefetch = "allow-runtime";
 
@@ -24,7 +27,9 @@ async function ProductDetails({
 
   return (
     <div data-testid="product-shell" className="grid gap-10 lg:grid-cols-2">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-border bg-accent-soft/30">
+      <div
+        className={`relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-border ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+      >
         <ProductImage
           src={product.imageUrl}
           alt={product.name}

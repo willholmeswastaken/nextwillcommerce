@@ -3,7 +3,10 @@ import { formatMoney } from "@/lib/utils";
 import type { ProductWithVariants } from "@/app/server/features/product/product.repository";
 import { ProductImage } from "@/components/product-image";
 import { Badge } from "@/components/ui/badge";
-import { PRODUCT_CARD_SIZES } from "@/lib/product-image";
+import {
+  PRODUCT_CARD_SIZES,
+  PRODUCT_IMAGE_FRAME_CLASSNAME,
+} from "@/lib/product-image";
 
 export function ProductCard({
   product,
@@ -25,7 +28,9 @@ export function ProductCard({
       prefetch
       className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-[0_10px_40px_-28px_rgba(20,17,15,0.45)] transition hover:-translate-y-1 hover:shadow-[0_18px_50px_-28px_rgba(15,118,110,0.45)]"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-accent-soft/40">
+      <div
+        className={`relative aspect-[4/5] overflow-hidden ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+      >
         <ProductImage
           src={product.imageUrl}
           alt={product.name}
