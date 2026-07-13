@@ -89,7 +89,7 @@ export function ProductDetailSkeleton() {
               <div className="h-9 w-28 animate-pulse rounded bg-border/60" />
               <div className="h-4 w-20 animate-pulse rounded bg-border/40" />
             </div>
-            <div className="hidden h-12 w-36 animate-pulse rounded-full bg-border/60 sm:block" />
+            <div className="h-12 w-36 animate-pulse rounded-full bg-border/60" />
           </div>
         </div>
       </div>

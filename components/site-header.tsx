@@ -95,7 +95,7 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-border bg-card/60">
+    <footer className="mt-auto border-t border-border bg-card/60 pb-[env(safe-area-inset-bottom)]">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-10 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p>
           WillCommerce — a blazing-fast Next.js 16.3 + Effect-TS ecommerce

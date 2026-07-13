@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -26,6 +26,11 @@ export const metadata: Metadata = {
   },
   description:
     "A blazing-fast Next.js 16.3 ecommerce template with Effect-TS, Instant Navigations, and Better Auth.",
+};
+
+/** Lets env(safe-area-inset-*) resolve on notched phones / iOS Safari. */
+export const viewport: Viewport = {
+  viewportFit: "cover",
 };
 
 function AppChrome({ children }: { children: React.ReactNode }) {

@@ -72,7 +72,7 @@ export default function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   return (
-    <div className="mx-auto max-w-6xl pb-[calc(5.75rem+env(safe-area-inset-bottom))] pt-0 sm:pb-10 sm:pt-6 lg:px-6 lg:py-10">
+    <div className="mx-auto max-w-6xl px-0 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-0 sm:px-0 sm:pb-10 sm:pt-6 lg:px-6 lg:py-10">
       {/* params must sit in Suspense for Cache Components; catalog data is cached. */}
       <Suspense fallback={<ProductDetailSkeleton />}>
         <ProductDetails params={params} />

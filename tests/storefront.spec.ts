@@ -19,7 +19,7 @@ test.describe("storefront", () => {
     await page.getByRole("link", { name: /Aero Runner/i }).first().click();
     await expect(page.locator('[data-testid="product-shell"]')).toBeVisible();
     await expect(page.getByRole("heading", { name: "Aero Runner" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Add to cart" }).first()).toBeVisible();
+    await expect(page.getByRole("button", { name: "Add to cart" })).toBeVisible();
   });
 
   test("lister to PDP resets scroll to top", async ({ page }) => {
