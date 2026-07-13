@@ -49,7 +49,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <ScrollToTop />
+        {/* usePathname suspends for dynamic-param routes under Cache Components */}
+        <Suspense fallback={null}>
+          <ScrollToTop />
+        </Suspense>
         <Suspense
           fallback={
             <CartProvider countReady={false}>
