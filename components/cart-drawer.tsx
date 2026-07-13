@@ -17,6 +17,7 @@ import {
 } from "@/app/(shop)/actions";
 import { useCart } from "@/components/cart-provider";
 import { formatMoney, cn } from "@/lib/utils";
+import { resolveProductImageSrc } from "@/lib/product-image";
 import type { CartWithItems } from "@/app/server/features/cart/cart.repository";
 
 export function CartDrawer() {
@@ -236,7 +237,7 @@ function DrawerContents({
           >
             <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-accent-soft/40">
               <Image
-                src={item.variant.product.imageUrl}
+                src={resolveProductImageSrc(item.variant.product.imageUrl)}
                 alt={item.variant.product.name}
                 fill
                 className="object-cover"

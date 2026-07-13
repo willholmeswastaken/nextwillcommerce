@@ -3,6 +3,7 @@
 import Image, { type ImageProps } from "next/image";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { resolveProductImageSrc } from "@/lib/product-image";
 
 type ProductImageProps = Omit<
   ImageProps,
@@ -23,11 +24,14 @@ export function ProductImage({
   quality = 75,
   className,
   preload = false,
+  src,
   ...props
 }: ProductImageProps) {
   const [loaded, setLoaded] = useState(false);
 
   const markLoaded = () => setLoaded(true);
+  const resolvedSrc =
+    typeof src === "string" ? resolveProductImageSrc(src) : src;
 
   return (
     <>
@@ -40,6 +44,7 @@ export function ProductImage({
       />
       <Image
         {...props}
+        src={resolvedSrc}
         alt={alt}
         quality={quality}
         preload={preload}
