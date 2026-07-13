@@ -22,8 +22,8 @@ async function ProductDetails({
   }
 
   return (
-    <div data-testid="product-shell" className="grid gap-10 lg:grid-cols-2">
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-border bg-accent-soft/30">
+    <div data-testid="product-shell" className="grid gap-6 lg:grid-cols-2 lg:gap-10">
+      <div className="relative aspect-[4/3] max-h-[36svh] overflow-hidden rounded-[1.5rem] border border-border bg-accent-soft/30 sm:rounded-[2rem] lg:aspect-[4/5] lg:max-h-none">
         <Image
           src={product.imageUrl}
           alt={product.name}
@@ -39,13 +39,13 @@ async function ProductDetails({
             <Badge key={cat.id}>{cat.name}</Badge>
           ))}
         </div>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight">
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:mt-4 sm:text-4xl">
           {product.name}
         </h1>
-        <p className="mt-4 text-base leading-relaxed text-muted">
+        <p className="mt-3 text-base leading-relaxed text-muted sm:mt-4">
           {product.description}
         </p>
-        <div className="mt-8">
+        <div className="mt-6 sm:mt-8">
           <AddToCartForm
             variants={product.variants}
             productName={product.name}
@@ -62,7 +62,7 @@ export default function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
       {/* params must sit in Suspense for Cache Components; catalog data is cached. */}
       <Suspense fallback={<ProductDetailSkeleton />}>
         <ProductDetails params={params} />
