@@ -136,11 +136,11 @@ pnpm test:e2e     # Playwright storefront flow
 4. One shell per route (Partial Prefetching) — use `<Link prefetch>` for deeper per-link prefetch
 5. Never call `auth.api.getSession()` inside cached functions
 6. Parallelize independent Effect fibers / promises on page load
-7. Use `next/image` + `next/font` with `display: swap`
+7. Ship catalog photos from `/public/products` and let `next/image` + Vercel Image Optimization serve AVIF/WebP with correct `sizes` / `preload`
 
 ## Customization
 
-- **Products** — edit `drizzle/seed.ts` or insert rows; revalidate with `updateTag('products')`
+- **Products** — add images under `public/products/`, point `imageUrl` at `/products/...` in `drizzle/seed.ts` (or your DB), then revalidate with `updateTag('products')`
 - **Categories** — add to `categories` + `product_categories`
 - **Stripe** — set env vars; mock path disables automatically
 - **OAuth** — add `socialProviders` to `lib/auth.ts` (Better Auth)

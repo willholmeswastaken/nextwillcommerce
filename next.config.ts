@@ -4,12 +4,8 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-    ],
+    // Local catalog assets in /public/products — optimized + edge-cached by Vercel.
+    formats: ["image/avif", "image/webp"],
   },
   async headers() {
     return [

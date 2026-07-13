@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { formatMoney } from "@/lib/utils";
+import { resolveProductImageSrc } from "@/lib/product-image";
 
 export type ConfirmationOrderItem = {
   id: string;
@@ -83,7 +84,7 @@ export function OrderConfirmation({ order }: { order: ConfirmationOrder }) {
                   {href ? (
                     <Link href={href} prefetch className="absolute inset-0">
                       <Image
-                        src={item.imageUrl}
+                        src={resolveProductImageSrc(item.imageUrl)}
                         alt={item.productName}
                         fill
                         sizes="96px"
@@ -92,7 +93,7 @@ export function OrderConfirmation({ order }: { order: ConfirmationOrder }) {
                     </Link>
                   ) : (
                     <Image
-                      src={item.imageUrl}
+                      src={resolveProductImageSrc(item.imageUrl)}
                       alt={item.productName}
                       fill
                       sizes="96px"

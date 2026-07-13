@@ -18,6 +18,8 @@ import {
   VariantNotFound,
 } from "@/app/server/lib/errors";
 import { orderAccessTokensEqual } from "@/lib/order-access";
+import { toAbsoluteUrl } from "@/lib/utils";
+import { resolveProductImageSrc } from "@/lib/product-image";
 
 export type CheckoutResult =
   | { provider: "stripe"; url: string; orderId: string; accessToken: string }
@@ -118,7 +120,12 @@ export const CheckoutServiceLive = Layer.effect(
                 unit_amount: item.variant.priceCents,
                 product_data: {
                   name: `${item.variant.product.name} — ${item.variant.name}`,
-                  images: [item.variant.product.imageUrl],
+                  images: [
+                    toAbsoluteUrl(
+                      resolveProductImageSrc(item.variant.product.imageUrl),
+                      baseUrl,
+                    ),
+                  ],
                 },
               },
             }));

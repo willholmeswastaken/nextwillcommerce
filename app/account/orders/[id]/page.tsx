@@ -8,6 +8,7 @@ import { runtime } from "@/app/server/runtime";
 import { AuthService } from "@/app/server/features/auth/auth.service";
 import { CheckoutService } from "@/app/server/features/checkout/checkout.service";
 import { formatMoney } from "@/lib/utils";
+import { resolveProductImageSrc } from "@/lib/product-image";
 
 async function OrderDetailContent({
   params,
@@ -77,7 +78,7 @@ async function OrderDetailContent({
                     {href ? (
                       <Link href={href} className="absolute inset-0">
                         <Image
-                          src={product.imageUrl}
+                          src={resolveProductImageSrc(product.imageUrl)}
                           alt={product.name}
                           fill
                           sizes="56px"
@@ -86,7 +87,7 @@ async function OrderDetailContent({
                       </Link>
                     ) : (
                       <Image
-                        src={product.imageUrl}
+                        src={resolveProductImageSrc(product.imageUrl)}
                         alt={product.name}
                         fill
                         sizes="56px"

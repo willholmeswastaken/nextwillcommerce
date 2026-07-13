@@ -9,6 +9,7 @@ import {
 } from "@/app/(shop)/actions";
 import { useCartOptional } from "@/components/cart-provider";
 import { formatMoney } from "@/lib/utils";
+import { resolveProductImageSrc } from "@/lib/product-image";
 import type { CartWithItems } from "@/app/server/features/cart/cart.repository";
 
 export function CartView({ cart }: { cart: CartWithItems }) {
@@ -53,7 +54,7 @@ export function CartView({ cart }: { cart: CartWithItems }) {
           >
             <div className="relative h-28 w-28 overflow-hidden rounded-2xl bg-accent-soft/40">
               <Image
-                src={item.variant.product.imageUrl}
+                src={resolveProductImageSrc(item.variant.product.imageUrl)}
                 alt={item.variant.product.name}
                 fill
                 className="object-cover"

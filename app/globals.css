@@ -120,3 +120,9 @@ body {
 @utility animate-order-check {
   animation: order-check-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+/* Pulsing underlay behind product photos — removed once the image loads. */
+@utility product-image-frame-pulse {
+  background-color: color-mix(in srgb, var(--border) 55%, var(--card));
+  animation: pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

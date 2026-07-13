@@ -1,15 +1,20 @@
-import Image from "next/image";
 import Link from "next/link";
 import { formatMoney } from "@/lib/utils";
 import type { ProductWithVariants } from "@/app/server/features/product/product.repository";
+import { ProductImage } from "@/components/product-image";
 import { Badge } from "@/components/ui/badge";
+import {
+  PRODUCT_CARD_SIZES,
+  PRODUCT_IMAGE_FRAME_CLASSNAME,
+} from "@/lib/product-image";
 
 export function ProductCard({
   product,
-  priority = false,
+  preload = false,
 }: {
   product: ProductWithVariants;
-  priority?: boolean;
+  /** Preload above-the-fold images (Next.js 16: replaces deprecated `priority`). */
+  preload?: boolean;
 }) {
   const lowest = product.variants.reduce(
     (min, v) => Math.min(min, v.priceCents),
@@ -23,17 +28,19 @@ export function ProductCard({
       prefetch
       className="group flex flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-[0_10px_40px_-28px_rgba(20,17,15,0.45)] transition hover:-translate-y-1 hover:shadow-[0_18px_50px_-28px_rgba(15,118,110,0.45)]"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-accent-soft/40">
-        <Image
+      <div
+        className={`relative aspect-[4/5] overflow-hidden ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+      >
+        <ProductImage
           src={product.imageUrl}
           alt={product.name}
           fill
-          sizes="(max-width: 768px) 100vw, 33vw"
-          priority={priority}
+          sizes={PRODUCT_CARD_SIZES}
+          preload={preload}
           className="object-cover transition duration-500 group-hover:scale-105"
         />
         {product.featured ? (
-          <div className="absolute left-3 top-3">
+          <div className="absolute left-3 top-3 z-[2]">
             <Badge>Featured</Badge>
           </div>
         ) : null}
