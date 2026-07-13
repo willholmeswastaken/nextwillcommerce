@@ -32,7 +32,7 @@ async function ProductDetails({
     >
       {/* Full-bleed square hero on mobile; taller framed split-pane on lg+ */}
       <div
-        className={`relative aspect-square overflow-hidden sm:mx-6 sm:rounded-[2rem] sm:border sm:border-border lg:mx-0 lg:aspect-[4/5] ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+        className={`relative aspect-square max-h-[70svh] overflow-hidden sm:mx-6 sm:rounded-[2rem] sm:border sm:border-border lg:mx-0 lg:aspect-[4/5] lg:max-h-none ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
       >
         <ProductImage
           src={product.imageUrl}
