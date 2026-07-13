@@ -1,4 +1,4 @@
-import { Data, Schema } from "effect";
+import { Data, Schema, Runtime, Cause, Option } from "effect";
 
 export class ProductNotFound extends Data.TaggedError("ProductNotFound")<{
   slug?: string;
@@ -54,9 +54,27 @@ export type ActionResult<T> =
   | { success: true; data: T }
   | { success: false; error: { type: string; message: string } };
 
+/** Effect.runPromise wraps failures in FiberFailure — unwrap to the tagged error. */
+function unwrapActionError(error: unknown): unknown {
+  if (!Runtime.isFiberFailure(error)) {
+    return error;
+  }
+  const cause = error[Runtime.FiberFailureCauseId];
+  const failure = Cause.failureOption(cause);
+  if (Option.isSome(failure)) {
+    return failure.value;
+  }
+  const defect = Cause.dieOption(cause);
+  if (Option.isSome(defect)) {
+    return defect.value;
+  }
+  return error;
+}
+
 export function toActionError(error: unknown): ActionResult<never> {
-  if (error && typeof error === "object" && "_tag" in error) {
-    const tagged = error as { _tag: string; message?: string };
+  const unwrapped = unwrapActionError(error);
+  if (unwrapped && typeof unwrapped === "object" && "_tag" in unwrapped) {
+    const tagged = unwrapped as { _tag: string; message?: string };
     const safeMessages: Record<string, string> = {
       OutOfStock: "Not enough inventory for one or more items",
       CartNotFound: "Cart not found",

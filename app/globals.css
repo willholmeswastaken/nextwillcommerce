@@ -87,3 +87,36 @@ body {
 @utility animate-cart-confirm {
   animation: cart-confirm 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+@keyframes order-confirm-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes order-check-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.08);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@utility animate-order-confirm {
+  animation: order-confirm-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility animate-order-check {
+  animation: order-check-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}

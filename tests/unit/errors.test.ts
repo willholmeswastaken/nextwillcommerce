@@ -1,11 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { Schema } from "effect";
+import { Effect, Schema } from "effect";
 import {
   AddToCartSchema,
   CheckoutSchema,
   RemoveCartItemSchema,
   toActionError,
   OutOfStock,
+  CheckoutError,
 } from "@/app/server/lib/errors";
 import { formatMoney } from "@/lib/utils";
 import { safeRedirectPath } from "@/lib/safe-redirect";
@@ -67,6 +68,29 @@ describe("error mapping", () => {
       expect(result.error.message).toBe(
         "Something went wrong. Please try again.",
       );
+    }
+  });
+
+  it("unwraps Effect FiberFailure so CheckoutError messages surface", async () => {
+    const fiberFailure = await Effect.runPromise(
+      Effect.fail(
+        new CheckoutError({
+          message:
+            "Payments are not configured. Set STRIPE_SECRET_KEY or ALLOW_MOCK_CHECKOUT=true.",
+        }),
+      ),
+    ).then(
+      () => {
+        throw new Error("expected failure");
+      },
+      (error: unknown) => error,
+    );
+
+    const result = toActionError(fiberFailure);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.type).toBe("CheckoutError");
+      expect(result.error.message).toMatch(/ALLOW_MOCK_CHECKOUT/);
     }
   });
 });

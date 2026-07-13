@@ -9,6 +9,8 @@ import {
   cartItems,
   type Order,
   type OrderItem,
+  type Product,
+  type ProductVariant,
 } from "@/drizzle/schema";
 import {
   DatabaseError,
@@ -18,7 +20,23 @@ import {
 import { OrderNotFound, OutOfStock } from "@/app/server/lib/errors";
 import { createOrderAccessToken } from "@/lib/order-access";
 
-export type OrderWithItems = Order & { items: OrderItem[] };
+export type OrderLine = OrderItem & {
+  variant: ProductVariant & { product: Product };
+};
+
+export type OrderWithItems = Order & { items: OrderLine[] };
+
+const orderWithItemsQuery = {
+  items: {
+    with: {
+      variant: {
+        with: {
+          product: true,
+        },
+      },
+    },
+  },
+} as const;
 
 type FulfillError = DatabaseError | OutOfStock | OrderNotFound;
 
@@ -129,16 +147,13 @@ export const OrderRepositoryLive = Layer.effect(
               throw new DatabaseError({ message: "Failed to create order" });
             }
 
-            const items = await tx
-              .insert(orderItems)
-              .values(
-                data.items.map((item) => ({
-                  id: nanoid(),
-                  orderId: id,
-                  ...item,
-                })),
-              )
-              .returning();
+            await tx.insert(orderItems).values(
+              data.items.map((item) => ({
+                id: nanoid(),
+                orderId: id,
+                ...item,
+              })),
+            );
 
             if (data.status === "paid") {
               for (const item of data.items) {
@@ -165,7 +180,14 @@ export const OrderRepositoryLive = Layer.effect(
               }
             }
 
-            return { ...order, items };
+            const created = await tx.query.orders.findFirst({
+              where: eq(orders.id, id),
+              with: orderWithItemsQuery,
+            });
+            if (!created) {
+              throw new DatabaseError({ message: "Failed to load created order" });
+            }
+            return created as OrderWithItems;
           });
         }).pipe(
           Effect.mapError((err): DatabaseError | OutOfStock => {
@@ -183,7 +205,7 @@ export const OrderRepositoryLive = Layer.effect(
           const order = yield* tryDb(() =>
             database.query.orders.findFirst({
               where: eq(orders.id, orderId),
-              with: { items: true },
+              with: orderWithItemsQuery,
             }),
           );
           if (!order) {
@@ -196,7 +218,7 @@ export const OrderRepositoryLive = Layer.effect(
         tryDb(async () => {
           const rows = await database.query.orders.findMany({
             where: eq(orders.userId, userId),
-            with: { items: true },
+            with: orderWithItemsQuery,
             orderBy: [desc(orders.createdAt)],
           });
           return rows as OrderWithItems[];
@@ -206,7 +228,7 @@ export const OrderRepositoryLive = Layer.effect(
         tryDb(async () => {
           const order = await database.query.orders.findFirst({
             where: eq(orders.stripeSessionId, sessionId),
-            with: { items: true },
+            with: orderWithItemsQuery,
           });
           return (order as OrderWithItems | undefined) ?? null;
         }),
@@ -216,7 +238,7 @@ export const OrderRepositoryLive = Layer.effect(
           return database.transaction(async (tx) => {
             const order = await tx.query.orders.findFirst({
               where: eq(orders.id, orderId),
-              with: { items: true },
+              with: orderWithItemsQuery,
             });
             if (!order) {
               throw new OrderNotFound({ orderId });
