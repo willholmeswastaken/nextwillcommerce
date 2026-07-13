@@ -1,10 +1,11 @@
 import { Suspense } from "react";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getProductBySlug } from "@/app/(shop)/catalog";
 import { AddToCartForm } from "@/components/add-to-cart-form";
+import { ProductImage } from "@/components/product-image";
 import { ProductDetailSkeleton } from "@/components/skeletons";
 import { Badge } from "@/components/ui/badge";
+import { PRODUCT_DETAIL_SIZES } from "@/lib/product-image";
 
 export const prefetch = "allow-runtime";
 
@@ -24,12 +25,12 @@ async function ProductDetails({
   return (
     <div data-testid="product-shell" className="grid gap-10 lg:grid-cols-2">
       <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-border bg-accent-soft/30">
-        <Image
+        <ProductImage
           src={product.imageUrl}
           alt={product.name}
           fill
-          priority
-          sizes="(max-width: 1024px) 100vw, 50vw"
+          preload
+          sizes={PRODUCT_DETAIL_SIZES}
           className="object-cover"
         />
       </div>

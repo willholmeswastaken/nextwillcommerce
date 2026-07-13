@@ -57,7 +57,7 @@ export default async function HomePage() {
             <ProductCard
               key={product.id}
               product={product}
-              priority={index < 3}
+              preload={index < 3}
             />
           ))}
         </div>

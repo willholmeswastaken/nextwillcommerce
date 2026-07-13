@@ -50,8 +50,12 @@ async function ProductsContent({
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
+            {products.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                preload={index < 3}
+              />
             ))}
           </div>
         )}
