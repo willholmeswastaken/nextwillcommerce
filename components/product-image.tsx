@@ -27,11 +27,13 @@ export function ProductImage({
   src,
   ...props
 }: ProductImageProps) {
-  const [loaded, setLoaded] = useState(false);
-
-  const markLoaded = () => setLoaded(true);
   const resolvedSrc =
     typeof src === "string" ? resolveProductImageSrc(src) : src;
+  // Track which src finished loading so soft navigations that reuse this
+  // instance (e.g. PDP → PDP) reset the pulse instead of keeping loaded=true.
+  const [loadedSrc, setLoadedSrc] = useState<typeof resolvedSrc | null>(null);
+  const loaded = loadedSrc === resolvedSrc;
+  const markLoaded = () => setLoadedSrc(resolvedSrc);
 
   return (
     <>
@@ -43,6 +45,7 @@ export function ProductImage({
         )}
       />
       <Image
+        key={typeof resolvedSrc === "string" ? resolvedSrc : undefined}
         {...props}
         src={resolvedSrc}
         alt={alt}
