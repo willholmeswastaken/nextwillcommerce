@@ -19,7 +19,27 @@ test.describe("storefront", () => {
     await page.getByRole("link", { name: /Aero Runner/i }).first().click();
     await expect(page.locator('[data-testid="product-shell"]')).toBeVisible();
     await expect(page.getByRole("heading", { name: "Aero Runner" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Add to cart" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Add to cart" }).first()).toBeVisible();
+  });
+
+  test("lister to PDP resets scroll to top", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/products");
+    await expect(page.getByRole("heading", { name: "Shop" })).toBeVisible();
+
+    // Scroll deep into the listing so a soft navigation would otherwise keep Y.
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await expect
+      .poll(async () => page.evaluate(() => window.scrollY))
+      .toBeGreaterThan(100);
+
+    await page.getByRole("link", { name: /Merino Beanie/i }).first().click();
+    await expect(page.locator('[data-testid="product-shell"]')).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Merino Beanie" })).toBeVisible();
+
+    await expect
+      .poll(async () => page.evaluate(() => window.scrollY))
+      .toBeLessThan(8);
   });
 
   test("add to cart and mock checkout", async ({ page }) => {

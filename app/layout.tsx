@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartShell } from "@/components/cart-shell";
 import { CartProvider } from "@/components/cart-provider";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { SiteFooter, SiteHeader } from "@/components/site-header";
 
 const geistSans = Geist({
@@ -48,6 +49,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <ScrollToTop />
         <Suspense
           fallback={
             <CartProvider countReady={false}>

@@ -24,6 +24,39 @@ export function AddToCartForm({
   const selected = variants.find((v) => v.id === selectedId) ?? variants[0];
   const outOfStock = !selected || selected.inventory < 1;
 
+  const addToCart = () => {
+    if (!selected) return;
+    setError(null);
+    setJustAdded(false);
+    startTransition(async () => {
+      const result = await addToCartAction({
+        variantId: selected.id,
+        quantity: 1,
+      });
+      if (result.success) {
+        setJustAdded(true);
+        openWithCart(result.data, { variantId: selected.id });
+        window.setTimeout(() => setJustAdded(false), 1600);
+      } else {
+        setError(result.error.message);
+      }
+    });
+  };
+
+  const buttonLabel = pending ? (
+    <span className="inline-flex items-center gap-2">
+      <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+      <span>Adding…</span>
+    </span>
+  ) : justAdded ? (
+    <span className="inline-flex items-center gap-2 animate-cart-confirm">
+      <Check className="h-4 w-4" aria-hidden />
+      <span>Added</span>
+    </span>
+  ) : (
+    <span>Add to cart</span>
+  );
+
   return (
     <div className="space-y-5">
       <div>
@@ -54,7 +87,8 @@ export function AddToCartForm({
         </div>
       </div>
 
-      <div className="flex items-end justify-between gap-4">
+      {/* Inline purchase row — desktop / tablet */}
+      <div className="hidden items-end justify-between gap-4 sm:flex">
         <div>
           <p className="text-3xl font-semibold tracking-tight">
             {selected ? formatMoney(selected.priceCents) : "—"}
@@ -71,45 +105,31 @@ export function AddToCartForm({
           size="lg"
           className={cn(
             "min-w-[10.5rem] transition-all duration-300",
-            justAdded && "bg-accent shadow-[0_12px_28px_-14px_rgba(15,118,110,0.7)]",
+            justAdded &&
+              "bg-accent shadow-[0_12px_28px_-14px_rgba(15,118,110,0.7)]",
           )}
           disabled={outOfStock || pending}
           aria-busy={pending}
-          onClick={() => {
-            if (!selected) return;
-            setError(null);
-            setJustAdded(false);
-            startTransition(async () => {
-              const result = await addToCartAction({
-                variantId: selected.id,
-                quantity: 1,
-              });
-              if (result.success) {
-                setJustAdded(true);
-                openWithCart(result.data, { variantId: selected.id });
-                window.setTimeout(() => setJustAdded(false), 1600);
-              } else {
-                setError(result.error.message);
-              }
-            });
-          }}
+          onClick={addToCart}
         >
           <span className="relative inline-flex h-5 items-center justify-center">
-            {pending ? (
-              <span className="inline-flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                <span>Adding…</span>
-              </span>
-            ) : justAdded ? (
-              <span className="inline-flex items-center gap-2 animate-cart-confirm">
-                <Check className="h-4 w-4" aria-hidden />
-                <span>Added</span>
-              </span>
-            ) : (
-              <span>Add to cart</span>
-            )}
+            {buttonLabel}
           </span>
         </Button>
+      </div>
+
+      {/* Compact price + stock on small screens (CTA lives in sticky bar) */}
+      <div className="sm:hidden">
+        <p className="text-3xl font-semibold tracking-tight">
+          {selected ? formatMoney(selected.priceCents) : "—"}
+        </p>
+        <p className="text-sm text-muted">
+          {selected
+            ? selected.inventory > 0
+              ? `${selected.inventory} in stock`
+              : "Out of stock"
+            : null}
+        </p>
       </div>
 
       {error ? (
@@ -120,6 +140,41 @@ export function AddToCartForm({
           {error}
         </p>
       ) : null}
+
+      {/* Sticky mobile purchase bar — always within reach */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-border/80 bg-background/90 px-4 pt-3 backdrop-blur-xl sm:hidden"
+        style={{
+          paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))",
+        }}
+      >
+        <div className="mx-auto flex max-w-6xl items-center gap-3">
+          <div className="min-w-0 flex-1">
+            <p className="truncate text-sm font-medium text-muted">
+              {productName}
+              {selected ? ` · ${selected.name}` : ""}
+            </p>
+            <p className="text-lg font-semibold tracking-tight">
+              {selected ? formatMoney(selected.priceCents) : "—"}
+            </p>
+          </div>
+          <Button
+            size="lg"
+            className={cn(
+              "shrink-0 min-w-[9.5rem] transition-all duration-300",
+              justAdded &&
+                "bg-accent shadow-[0_12px_28px_-14px_rgba(15,118,110,0.7)]",
+            )}
+            disabled={outOfStock || pending}
+            aria-busy={pending}
+            onClick={addToCart}
+          >
+            <span className="relative inline-flex h-5 items-center justify-center">
+              {buttonLabel}
+            </span>
+          </Button>
+        </div>
+      </div>
 
       <span className="sr-only" aria-live="polite">
         {pending

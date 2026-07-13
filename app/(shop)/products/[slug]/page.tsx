@@ -28,10 +28,11 @@ async function ProductDetails({
   return (
     <div
       data-testid="product-shell"
-      className="grid gap-6 lg:grid-cols-2 lg:gap-10"
+      className="grid gap-6 lg:grid-cols-2 lg:gap-10 lg:px-0"
     >
+      {/* Full-bleed hero on mobile; framed split-pane on lg+ */}
       <div
-        className={`relative aspect-[4/3] max-h-[36svh] overflow-hidden rounded-[1.5rem] border border-border sm:rounded-[2rem] lg:aspect-[4/5] lg:max-h-none ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+        className={`relative aspect-[4/5] overflow-hidden sm:mx-6 sm:rounded-[2rem] sm:border sm:border-border lg:mx-0 ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
       >
         <ProductImage
           src={product.imageUrl}
@@ -42,7 +43,7 @@ async function ProductDetails({
           className="object-cover"
         />
       </div>
-      <div className="flex flex-col justify-center">
+      <div className="flex flex-col justify-center px-4 sm:px-6 lg:px-0">
         <div className="flex flex-wrap gap-2">
           {product.categories.map((cat) => (
             <Badge key={cat.id}>{cat.name}</Badge>
@@ -71,7 +72,7 @@ export default function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-6xl pb-[calc(5.75rem+env(safe-area-inset-bottom))] pt-0 sm:pb-10 sm:pt-6 lg:px-6 lg:py-10">
       {/* params must sit in Suspense for Cache Components; catalog data is cached. */}
       <Suspense fallback={<ProductDetailSkeleton />}>
         <ProductDetails params={params} />
