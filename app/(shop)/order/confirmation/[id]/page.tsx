@@ -62,7 +62,7 @@ async function ConfirmationContent({
           quantity: item.quantity,
           unitPriceCents: item.unitPriceCents,
           imageUrl: item.variant.product.imageUrl,
-          slug: item.variant.product.slug,
+          slug: item.variant.product.active ? item.variant.product.slug : null,
         })),
       }}
     />

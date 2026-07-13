@@ -63,31 +63,45 @@ async function OrderDetailContent({
         <ul className="mt-6 space-y-4 text-sm">
           {order.items.map((item) => {
             const product = item.variant.product;
+            const href = product.active ? `/products/${product.slug}` : null;
+            const title = (
+              <span className="font-medium">{item.productName}</span>
+            );
             return (
               <li
                 key={item.id}
                 className="flex items-center justify-between gap-3 border-t border-border pt-4"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <Link
-                    href={`/products/${product.slug}`}
-                    className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-accent-soft/40"
-                  >
-                    <Image
-                      src={product.imageUrl}
-                      alt={product.name}
-                      fill
-                      sizes="56px"
-                      className="object-cover"
-                    />
-                  </Link>
+                  <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-2xl bg-accent-soft/40">
+                    {href ? (
+                      <Link href={href} className="absolute inset-0">
+                        <Image
+                          src={product.imageUrl}
+                          alt={product.name}
+                          fill
+                          sizes="56px"
+                          className="object-cover"
+                        />
+                      </Link>
+                    ) : (
+                      <Image
+                        src={product.imageUrl}
+                        alt={product.name}
+                        fill
+                        sizes="56px"
+                        className="object-cover"
+                      />
+                    )}
+                  </div>
                   <div className="min-w-0">
-                    <Link
-                      href={`/products/${product.slug}`}
-                      className="font-medium hover:text-accent"
-                    >
-                      {item.productName}
-                    </Link>
+                    {href ? (
+                      <Link href={href} className="hover:text-accent">
+                        {title}
+                      </Link>
+                    ) : (
+                      title
+                    )}
                     <p className="text-muted">
                       {item.variantName} · Qty {item.quantity}
                     </p>
