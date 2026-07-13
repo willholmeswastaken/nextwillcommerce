@@ -14,9 +14,9 @@ type ProductImageProps = Omit<
 };
 
 /**
- * Storefront product photo with CDN-sized srcset.
+ * Storefront product photo from /public, optimized by next/image on Vercel.
  * A warm pulse sits behind the photo and is removed once it loads —
- * animating the parent would keep fading the loaded image forever.
+ * animating the frame parent would keep fading the loaded image forever.
  */
 export function ProductImage({
   alt,

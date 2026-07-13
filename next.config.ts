@@ -4,15 +4,8 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   images: {
-    // Unsplash already CDNs + resizes; skip the Next.js optimize proxy hop.
-    loader: "custom",
-    loaderFile: "./lib/image-loader.ts",
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "images.unsplash.com",
-      },
-    ],
+    // Local catalog assets in /public/products — optimized + edge-cached by Vercel.
+    formats: ["image/avif", "image/webp"],
   },
   async headers() {
     return [

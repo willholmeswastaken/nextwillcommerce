@@ -57,7 +57,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "Breathable knit upper with a responsive foam midsole. Built for tempo runs and city miles.",
     imageUrl:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=800&q=80",
+      "/products/aero-runner.jpg",
     featured: true,
     categoryIds: ["cat_footwear"],
     variants: [
@@ -89,7 +89,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "Waterproof membrane, Vibram-inspired outsole, and a mid-cut collar for rocky terrain.",
     imageUrl:
-      "https://images.unsplash.com/photo-1520639888713-7851133b1ed0?w=800&q=80",
+      "/products/trail-peak-boot.jpg",
     featured: true,
     categoryIds: ["cat_footwear"],
     variants: [
@@ -113,7 +113,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "Ultra-soft organic cotton with a relaxed athletic fit. Washes soft, never bags out.",
     imageUrl:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80",
+      "/products/cloud-soft-tee.jpg",
     featured: true,
     categoryIds: ["cat_apparel"],
     variants: [
@@ -143,7 +143,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "Midweight recycled fleece with a quarter zip and thumb loops for cold morning starts.",
     imageUrl:
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80",
+      "/products/summit-fleece.jpg",
     featured: false,
     categoryIds: ["cat_apparel"],
     variants: [
@@ -167,7 +167,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "5-inch inseam with a bonded waistband and zip pocket. Moves with you, not against you.",
     imageUrl:
-      "https://images.unsplash.com/photo-1591195853828-11db59a44f6b?w=800&q=80",
+      "/products/velocity-shorts.jpg",
     featured: false,
     categoryIds: ["cat_apparel"],
     variants: [
@@ -191,7 +191,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "Weather-resistant shell, laptop sleeve, and a hidden water-bottle pocket. Commute ready.",
     imageUrl:
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80",
+      "/products/daypack-20l.jpg",
     featured: true,
     categoryIds: ["cat_accessories"],
     variants: [
@@ -215,7 +215,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "Double-wall vacuum steel that keeps drinks cold for 24 hours. Leak-proof flip lid.",
     imageUrl:
-      "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&q=80",
+      "/products/insulated-bottle-750.jpg",
     featured: false,
     categoryIds: ["cat_accessories"],
     variants: [
@@ -239,7 +239,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "Fine-gauge merino that regulates temperature without the itch. One size, deep cuff.",
     imageUrl:
-      "https://images.unsplash.com/photo-1576871337622-98d48d1cf531?w=800&q=80",
+      "/products/merino-beanie.jpg",
     featured: false,
     categoryIds: ["cat_accessories", "cat_apparel"],
     variants: [
@@ -263,7 +263,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "Structured six-panel with a moisture-wicking sweatband. Embroidery-ready crown.",
     imageUrl:
-      "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=800&q=80",
+      "/products/studio-cap.jpg",
     featured: false,
     categoryIds: ["cat_accessories"],
     variants: [
@@ -281,7 +281,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "Packable ripstop shell with reflective hits and a two-way zipper. Blocks wind, not style.",
     imageUrl:
-      "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80",
+      "/products/lumen-windbreaker.jpg",
     featured: true,
     categoryIds: ["cat_apparel"],
     variants: [
@@ -305,7 +305,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "Open-palm design with silicone grip pads. Machine washable, touchscreen compatible.",
     imageUrl:
-      "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=800&q=80",
+      "/products/grip-training-gloves.jpg",
     featured: false,
     categoryIds: ["cat_accessories"],
     variants: [
@@ -329,7 +329,7 @@ const PRODUCTS: SeedProduct[] = [
     description:
       "Graduated compression with targeted cushioning under the ball of the foot.",
     imageUrl:
-      "https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?w=800&q=80",
+      "/products/pulse-compression-socks.jpg",
     featured: false,
     categoryIds: ["cat_apparel", "cat_footwear"],
     variants: [
