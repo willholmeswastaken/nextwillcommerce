@@ -30,9 +30,9 @@ async function ProductDetails({
       data-testid="product-shell"
       className="grid gap-6 lg:grid-cols-2 lg:gap-10 lg:px-0"
     >
-      {/* Full-bleed hero on mobile; framed split-pane on lg+ */}
+      {/* Full-bleed square hero on mobile; taller framed split-pane on lg+ */}
       <div
-        className={`relative aspect-[4/5] overflow-hidden sm:mx-6 sm:rounded-[2rem] sm:border sm:border-border lg:mx-0 ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+        className={`relative aspect-square overflow-hidden sm:mx-6 sm:rounded-[2rem] sm:border sm:border-border lg:mx-0 lg:aspect-[4/5] ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
       >
         <ProductImage
           src={product.imageUrl}
