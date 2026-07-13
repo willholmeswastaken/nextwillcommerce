@@ -7,7 +7,8 @@ export const PRODUCT_DETAIL_SIZES =
   "(max-width: 1024px) 100vw, 50vw";
 
 /**
- * Warm paper frame with a soft sheen while the photo loads.
- * Applied on the wrapper; the image covers it once painted.
+ * Static warm paper tone for the image frame (no animation).
+ * The pulse lives on a sibling underlay inside ProductImage and stops on load.
  */
-export const PRODUCT_IMAGE_FRAME_CLASSNAME = "product-image-frame";
+export const PRODUCT_IMAGE_FRAME_CLASSNAME =
+  "bg-[color-mix(in_srgb,var(--border)_55%,var(--card))]";

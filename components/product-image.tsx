@@ -15,8 +15,8 @@ type ProductImageProps = Omit<
 
 /**
  * Storefront product photo with CDN-sized srcset.
- * Sits on the warm frame behind it (no muddy SVG blur) and fades in when ready.
- * Preloaded LCP images skip the fade so they paint immediately.
+ * A warm pulse sits behind the photo and is removed once it loads —
+ * animating the parent would keep fading the loaded image forever.
  */
 export function ProductImage({
   alt,
@@ -27,19 +27,34 @@ export function ProductImage({
 }: ProductImageProps) {
   const [loaded, setLoaded] = useState(false);
 
+  const markLoaded = () => setLoaded(true);
+
   return (
-    <Image
-      {...props}
-      alt={alt}
-      quality={quality}
-      preload={preload}
-      placeholder="empty"
-      onLoad={() => setLoaded(true)}
-      className={cn(
-        !preload && "transition-opacity duration-500 ease-out",
-        !preload && !loaded && "opacity-0",
-        className,
-      )}
-    />
+    <>
+      <span
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute inset-0 product-image-frame-pulse",
+          loaded && "hidden",
+        )}
+      />
+      <Image
+        {...props}
+        alt={alt}
+        quality={quality}
+        preload={preload}
+        placeholder="empty"
+        onLoad={markLoaded}
+        ref={(node) => {
+          if (node?.complete) markLoaded();
+        }}
+        className={cn(
+          "z-[1]",
+          !preload && "transition-opacity duration-500 ease-out",
+          !preload && !loaded && "opacity-0",
+          className,
+        )}
+      />
+    </>
   );
 }

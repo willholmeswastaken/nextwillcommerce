@@ -40,7 +40,7 @@ export function ProductCard({
           className="object-cover transition duration-500 group-hover:scale-105"
         />
         {product.featured ? (
-          <div className="absolute left-3 top-3">
+          <div className="absolute left-3 top-3 z-[2]">
             <Badge>Featured</Badge>
           </div>
         ) : null}
