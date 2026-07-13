@@ -52,7 +52,7 @@ function AccountLinkFallback() {
 
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/80 pt-[env(safe-area-inset-top)] backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-8">
           <Link href="/" className="font-semibold tracking-tight">
@@ -95,7 +95,7 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-border bg-card/60">
+    <footer className="mt-auto border-t border-border bg-card/60 pb-[env(safe-area-inset-bottom)]">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-10 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p>
           WillCommerce — a blazing-fast Next.js 16.3 + Effect-TS ecommerce

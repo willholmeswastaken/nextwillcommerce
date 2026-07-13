@@ -1,9 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartShell } from "@/components/cart-shell";
 import { CartProvider } from "@/components/cart-provider";
+import { ScrollToTop } from "@/components/scroll-to-top";
 import { SiteFooter, SiteHeader } from "@/components/site-header";
 
 const geistSans = Geist({
@@ -27,6 +28,11 @@ export const metadata: Metadata = {
     "A blazing-fast Next.js 16.3 ecommerce template with Effect-TS, Instant Navigations, and Better Auth.",
 };
 
+/** Lets env(safe-area-inset-*) resolve on notched phones / iOS Safari. */
+export const viewport: Viewport = {
+  viewportFit: "cover",
+};
+
 function AppChrome({ children }: { children: React.ReactNode }) {
   return (
     <>
@@ -48,6 +54,10 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        {/* usePathname suspends for dynamic-param routes under Cache Components */}
+        <Suspense fallback={null}>
+          <ScrollToTop />
+        </Suspense>
         <Suspense
           fallback={
             <CartProvider countReady={false}>
