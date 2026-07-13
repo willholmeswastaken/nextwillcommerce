@@ -120,3 +120,27 @@ body {
 @utility animate-order-check {
   animation: order-check-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
+
+/* Soft sheen for product image frames while photos load. */
+@keyframes product-frame-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+@utility product-image-frame {
+  background-color: #efeae2;
+  background-image: linear-gradient(
+    110deg,
+    #efeae2 0%,
+    #efeae2 38%,
+    #f7f2ea 50%,
+    #efeae2 62%,
+    #e7e0d4 100%
+  );
+  background-size: 220% 100%;
+  animation: product-frame-shimmer 1.6s ease-in-out infinite;
+}
