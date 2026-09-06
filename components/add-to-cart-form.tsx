@@ -74,6 +74,14 @@ export function AddToCartForm({
       </div>
 
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md sm:static sm:z-auto sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
+        {error ? (
+          <p
+            role="alert"
+            className="mx-auto mb-3 max-w-7xl rounded-xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger"
+          >
+            {error}
+          </p>
+        ) : null}
         <div className="mx-auto flex max-w-7xl items-end justify-between gap-4">
           <div>
             <p className="text-2xl font-semibold tracking-tight sm:text-3xl">
@@ -115,15 +123,6 @@ export function AddToCartForm({
           </Button>
         </div>
       </div>
-
-      {error ? (
-        <p
-          role="alert"
-          className="rounded-xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger"
-        >
-          {error}
-        </p>
-      ) : null}
 
       <span className="sr-only" aria-live="polite">
         {pending
