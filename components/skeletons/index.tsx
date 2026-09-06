@@ -66,7 +66,7 @@ export function ProductsListingSkeleton({
 export function ProductDetailSkeleton() {
   return (
     <div data-testid="product-shell" className="grid gap-6 lg:grid-cols-2 lg:gap-10">
-      <div className="-mx-4 aspect-[4/5] min-h-[58svh] animate-pulse bg-border/60 sm:mx-0 sm:min-h-0 sm:rounded-2xl sm:border sm:border-border lg:aspect-[4/5]" />
+      <div className="-mx-4 aspect-square max-h-[42svh] animate-pulse bg-border/60 sm:mx-0 sm:max-h-none sm:rounded-2xl sm:border sm:border-border lg:aspect-[4/5]" />
       <div className="flex flex-col justify-center">
         <div className="flex flex-wrap gap-2">
           <div className="h-6 w-16 animate-pulse rounded-full bg-border/60" />
