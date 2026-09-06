@@ -48,7 +48,13 @@ test.describe("storefront", () => {
     await expect(page.getByRole("link", { name: /Trail Peak Boot/i }).first()).toBeVisible();
 
     await page.goto("/products");
-    await page
+    const pulseCard = page.getByRole("article").filter({
+      has: page.getByRole("heading", { name: "Pulse Compression Socks" }),
+    });
+    await pulseCard.evaluate((node) =>
+      node.scrollIntoView({ block: "center", inline: "nearest" }),
+    );
+    await pulseCard
       .getByRole("button", { name: /quick add pulse compression socks/i })
       .click();
     const cartDrawer = page.getByRole("dialog", { name: "Your cart" });
@@ -56,8 +62,14 @@ test.describe("storefront", () => {
     await expect(cartDrawer.getByText("Pulse Compression Socks")).toBeVisible();
     await cartDrawer.getByRole("button", { name: "Close cart panel" }).click();
 
-    await page.getByRole("button", { name: /quick add aero runner/i }).click();
-    await page.getByRole("button", { name: "US 8" }).click();
+    const aeroCard = page.getByRole("article").filter({
+      has: page.getByRole("heading", { name: "Aero Runner" }),
+    });
+    await aeroCard.evaluate((node) =>
+      node.scrollIntoView({ block: "center", inline: "nearest" }),
+    );
+    await aeroCard.getByRole("button", { name: /quick add aero runner/i }).click();
+    await aeroCard.getByRole("button", { name: "US 8" }).click();
     await expect(page.getByRole("dialog", { name: "Your cart" })).toBeVisible();
     await expect(
       page.getByRole("dialog", { name: "Your cart" }).getByText("Aero Runner"),
