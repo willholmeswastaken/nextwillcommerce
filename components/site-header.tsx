@@ -59,23 +59,26 @@ export function SiteHeader() {
             <span className="text-accent">Will</span>Commerce
           </Link>
           <nav className="hidden items-center gap-5 text-sm text-muted md:flex">
-            <Link href="/products" className="hover:text-foreground">
+            <Link href="/products" prefetch className="hover:text-foreground">
               Shop
             </Link>
             <Link
               href="/products?category=footwear"
+              prefetch
               className="hover:text-foreground"
             >
               Footwear
             </Link>
             <Link
               href="/products?category=apparel"
+              prefetch
               className="hover:text-foreground"
             >
               Apparel
             </Link>
             <Link
               href="/products?category=accessories"
+              prefetch
               className="hover:text-foreground"
             >
               Accessories

@@ -20,6 +20,7 @@ async function ProductsContent({
       <div className="flex flex-wrap gap-2">
         <Link
           href="/products"
+          prefetch
           className={`rounded-full border px-4 py-2 text-sm ${
             !category
               ? "border-accent bg-accent text-accent-foreground"
@@ -32,6 +33,7 @@ async function ProductsContent({
           <Link
             key={cat.id}
             href={`/products?category=${cat.slug}`}
+            prefetch
             className={`rounded-full border px-4 py-2 text-sm ${
               category === cat.slug
                 ? "border-accent bg-accent text-accent-foreground"

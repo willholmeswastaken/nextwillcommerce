@@ -15,6 +15,7 @@ export class ProductService extends Context.Tag("ProductService")<
       categorySlug?: string;
       featured?: boolean;
     }) => Effect.Effect<ProductWithVariants[], DatabaseError>;
+    listSlugs: () => Effect.Effect<string[], DatabaseError>;
     getBySlug: (
       slug: string,
     ) => Effect.Effect<ProductWithVariants, ProductNotFound | DatabaseError>;
@@ -34,6 +35,7 @@ export const ProductServiceLive = Layer.effect(
     const repo = yield* ProductRepository;
     return ProductService.of({
       list: (opts) => repo.listActive(opts),
+      listSlugs: () => repo.listActiveSlugs(),
       getBySlug: (slug) => repo.getBySlug(slug),
       getVariant: (variantId) => repo.getVariantById(variantId),
       categories: () => repo.listCategories(),

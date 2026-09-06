@@ -48,7 +48,7 @@ export default async function HomePage() {
               Served from cached catalog queries.
             </p>
           </div>
-          <Link href="/products" className="text-sm text-accent underline">
+          <Link href="/products" prefetch className="text-sm text-accent underline">
             View all
           </Link>
         </div>
