@@ -34,15 +34,11 @@ async function productMetadata(slug: string): Promise<Metadata> {
   "use cache";
   cacheLife("hours");
   cacheTag("products", `product:${slug}`);
-  try {
-    const product = await getProductBySlug(slug);
-    return {
-      title: product.name,
-      description: product.description,
-    };
-  } catch {
-    return { title: "Product" };
-  }
+  const product = await getProductBySlug(slug);
+  return {
+    title: product.name,
+    description: product.description,
+  };
 }
 
 export async function generateMetadata({
@@ -51,7 +47,13 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  return productMetadata(slug);
+  try {
+    return await productMetadata(slug);
+  } catch {
+    // Outside the cache boundary so transient misses are not stored as
+    // a successful generic title under the hours profile.
+    return { title: "Product" };
+  }
 }
 
 function ProductView({ product }: { product: ProductWithVariants }) {
