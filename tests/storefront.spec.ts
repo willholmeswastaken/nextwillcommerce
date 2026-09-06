@@ -35,7 +35,9 @@ test.describe("storefront", () => {
 
     await cartDrawer.getByRole("link", { name: "Checkout" }).click();
     await expect(page.getByRole("heading", { name: "Checkout" })).toBeVisible();
-    await expect(page.getByText("Aero Runner")).toBeVisible();
+    await expect(
+      page.getByRole("listitem").filter({ hasText: /Aero Runner/ }),
+    ).toBeVisible();
 
     await page.getByLabel("Email for receipt").fill("buyer@example.com");
     await page.getByRole("button", { name: /Complete mock checkout/i }).click();
