@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Plus, X } from "lucide-react";
 import { addToCartAction } from "@/app/(shop)/actions";
 import { useCart } from "@/components/cart-provider";
-import { cn, formatMoney } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 type QuickAddVariant = {
   id: string;
@@ -12,6 +12,14 @@ type QuickAddVariant = {
   priceCents: number;
   inventory: number;
 };
+
+function chipLabel(variants: QuickAddVariant[], variant: QuickAddVariant) {
+  const primary = variant.name.split(" / ")[0]?.trim() || variant.name;
+  const clash =
+    variants.filter((item) => (item.name.split(" / ")[0]?.trim() || item.name) === primary)
+      .length > 1;
+  return clash ? variant.name : primary;
+}
 
 export function QuickAdd({
   productName,
@@ -48,113 +56,81 @@ export function QuickAdd({
 
   if (inStock.length === 0) {
     return (
-      <p className="rounded-full border border-border bg-background/80 px-3 py-2 text-center text-xs uppercase tracking-wide text-muted">
+      <p className="rounded-full bg-inverse/80 px-3 py-1.5 text-[11px] uppercase tracking-wide text-inverse-foreground">
         Sold out
       </p>
     );
   }
 
-  if (inStock.length === 1) {
-    const variant = inStock[0]!;
+  if (picking && inStock.length > 1) {
     return (
-      <div className="space-y-2">
-        <button
-          type="button"
-          disabled={pending}
-          aria-busy={pending}
-          onClick={() => addVariant(variant)}
-          className={cn(
-            "inline-flex h-11 w-full items-center justify-center rounded-full bg-foreground text-sm font-medium text-background transition hover:opacity-85 disabled:opacity-60",
-          )}
-        >
-          {pending ? (
-            <span className="inline-flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-              Adding…
-            </span>
-          ) : justAdded ? (
-            <span className="inline-flex items-center gap-2 animate-cart-confirm">
-              <Check className="h-4 w-4" aria-hidden />
-              Added
-            </span>
-          ) : (
-            `Quick add ${productName}`
-          )}
-        </button>
+      <div className="w-full rounded-xl bg-inverse/92 p-3 text-inverse-foreground shadow-[0_16px_40px_-24px_rgba(23,23,23,0.65)] backdrop-blur-md">
+        <div className="mb-2 flex items-center justify-between gap-2">
+          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-inverse-foreground/65">
+            Select a size
+          </p>
+          <button
+            type="button"
+            onClick={() => setPicking(false)}
+            className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-inverse-foreground/10"
+            aria-label="Close size picker"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {inStock.map((variant) => (
+            <button
+              key={variant.id}
+              type="button"
+              disabled={pending}
+              onClick={() => addVariant(variant)}
+              className="inline-flex h-9 min-w-10 items-center justify-center rounded-lg bg-inverse-foreground/12 px-2.5 text-xs font-medium transition hover:bg-inverse-foreground hover:text-inverse disabled:opacity-50"
+            >
+              {chipLabel(inStock, variant)}
+            </button>
+          ))}
+        </div>
         {error ? (
-          <p role="alert" className="text-xs text-danger">
+          <p role="alert" className="mt-2 text-xs text-red-200">
             {error}
           </p>
         ) : null}
         <span className="sr-only" aria-live="polite">
-          {pending
-            ? `Adding ${productName} to cart`
-            : justAdded
-              ? `${productName} added to cart`
-              : ""}
+          {pending ? `Adding ${productName} to cart` : ""}
         </span>
       </div>
     );
   }
 
   return (
-    <div className="space-y-2">
-      {picking ? (
-        <div className="rounded-2xl border border-border bg-background/95 p-2 shadow-[0_16px_40px_-28px_rgba(22,18,14,0.45)]">
-          <p className="px-2 pb-2 text-[11px] uppercase tracking-[0.18em] text-muted">
-            Choose option
-          </p>
-          <div className="flex flex-col gap-1">
-            {inStock.map((variant) => (
-              <button
-                key={variant.id}
-                type="button"
-                disabled={pending}
-                onClick={() => addVariant(variant)}
-                className="flex items-center justify-between rounded-xl px-3 py-2 text-left text-sm transition hover:bg-accent-soft disabled:opacity-60"
-              >
-                <span>{variant.name}</span>
-                <span className="tabular-nums text-muted">
-                  {formatMoney(variant.priceCents)}
-                </span>
-              </button>
-            ))}
-          </div>
-          <button
-            type="button"
-            className="mt-1 w-full py-1.5 text-xs text-muted underline-offset-2 hover:underline"
-            onClick={() => setPicking(false)}
-          >
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <button
-          type="button"
-          disabled={pending}
-          aria-busy={pending}
-          onClick={() => setPicking(true)}
-          className={cn(
-            "inline-flex h-11 w-full items-center justify-center rounded-full bg-foreground text-sm font-medium text-background transition hover:opacity-85 disabled:opacity-60",
-          )}
-        >
-          {pending ? (
-            <span className="inline-flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-              Adding…
-            </span>
-          ) : justAdded ? (
-            <span className="inline-flex items-center gap-2 animate-cart-confirm">
-              <Check className="h-4 w-4" aria-hidden />
-              Added
-            </span>
-          ) : (
-            `Quick add ${productName}`
-          )}
-        </button>
-      )}
+    <div className="flex flex-col items-end gap-1">
+      <button
+        type="button"
+        disabled={pending}
+        aria-busy={pending}
+        aria-label={`Quick add ${productName}`}
+        onClick={() => {
+          if (inStock.length === 1) {
+            addVariant(inStock[0]!);
+            return;
+          }
+          setPicking(true);
+        }}
+        className={cn(
+          "inline-flex h-10 w-10 items-center justify-center rounded-full bg-inverse text-inverse-foreground shadow-[0_10px_24px_-12px_rgba(23,23,23,0.7)] transition hover:scale-105 disabled:opacity-60",
+        )}
+      >
+        {pending ? (
+          <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+        ) : justAdded ? (
+          <Check className="h-4 w-4 animate-cart-confirm" aria-hidden />
+        ) : (
+          <Plus className="h-4 w-4" aria-hidden />
+        )}
+      </button>
       {error ? (
-        <p role="alert" className="text-xs text-danger">
+        <p role="alert" className="rounded-md bg-card/90 px-2 py-1 text-xs text-danger">
           {error}
         </p>
       ) : null}

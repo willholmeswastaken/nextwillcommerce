@@ -61,7 +61,7 @@ function ProductView({ product }: { product: ProductWithVariants }) {
       className="grid gap-6 lg:grid-cols-2 lg:gap-10"
     >
       <div
-        className={`relative aspect-[4/3] max-h-[36svh] overflow-hidden rounded-[1.5rem] border border-border sm:rounded-[2rem] lg:aspect-[4/5] lg:max-h-none ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+        className={`relative -mx-4 aspect-[4/5] min-h-[58svh] overflow-hidden sm:mx-0 sm:min-h-0 sm:rounded-2xl sm:border sm:border-border lg:aspect-[4/5] ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
       >
         <ProductImage
           src={product.imageUrl}
@@ -72,7 +72,7 @@ function ProductView({ product }: { product: ProductWithVariants }) {
           className="object-cover"
         />
       </div>
-      <div className="flex flex-col justify-center">
+      <div className="flex flex-col justify-center px-0">
         <div className="flex flex-wrap gap-2">
           {product.categories.map((cat) => (
             <Badge key={cat.id}>{cat.name}</Badge>
@@ -135,7 +135,7 @@ async function ProductDetails({
 
   return (
     <>
-      <nav className="mb-6 text-sm text-muted">
+      <nav className="mb-3 text-sm text-muted sm:mb-6">
         <Link href="/products" prefetch className="hover:text-foreground">
           Shop
         </Link>
@@ -161,12 +161,12 @@ export default function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-10">
       {/* params must sit in Suspense for Cache Components; catalog data is cached. */}
       <Suspense
         fallback={
           <>
-            <nav className="mb-6 text-sm text-muted">
+            <nav className="mb-3 text-sm text-muted sm:mb-6">
               <Link href="/products" prefetch className="hover:text-foreground">
                 Shop
               </Link>

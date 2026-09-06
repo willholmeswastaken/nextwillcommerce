@@ -36,58 +36,57 @@ export function ProductCard({
         className,
       )}
     >
-      <Link
-        href={`/products/${product.slug}`}
-        prefetch
-        className={cn(
-          "relative overflow-hidden",
-          featured ? "aspect-[4/3] sm:aspect-[5/4]" : "aspect-[4/5]",
-          PRODUCT_IMAGE_FRAME_CLASSNAME,
-        )}
-      >
-        <ProductImage
-          src={product.imageUrl}
-          alt={product.name}
-          fill
-          sizes={PRODUCT_CARD_SIZES}
-          preload={preload}
-          className="object-cover transition duration-700 group-hover:scale-105"
-        />
-        <div className="absolute left-3 top-3 z-[2] flex flex-wrap gap-1.5">
-          {product.featured ? <Badge>Drop</Badge> : null}
-          {sale ? (
-            <Badge className="bg-sale text-white">Sale</Badge>
-          ) : null}
-        </div>
-      </Link>
-      <div className="flex flex-1 flex-col gap-3 p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.2em] text-muted">
-              {product.categories.map((cat) => cat.name).join(" · ") || "Kit"}
-            </p>
-            <h3 className="font-display mt-1 text-xl leading-tight tracking-tight">
-              <Link
-                href={`/products/${product.slug}`}
-                prefetch
-                className="hover:underline"
-              >
-                {product.name}
-              </Link>
-            </h3>
-          </div>
-          <div className="text-right">
-            <p className="font-medium tabular-nums">{formatMoney(lowest)}</p>
-            {compare ? (
-              <p className="text-xs text-muted line-through tabular-nums">
-                {formatMoney(compare)}
-              </p>
+      <div className="relative">
+        <Link
+          href={`/products/${product.slug}`}
+          prefetch
+          className={cn(
+            "relative block overflow-hidden",
+            featured ? "aspect-[4/3] sm:aspect-[5/4]" : "aspect-[4/5]",
+            PRODUCT_IMAGE_FRAME_CLASSNAME,
+          )}
+        >
+          <ProductImage
+            src={product.imageUrl}
+            alt={product.name}
+            fill
+            sizes={PRODUCT_CARD_SIZES}
+            preload={preload}
+            className="object-cover transition duration-700 group-hover:scale-105"
+          />
+          <div className="absolute left-3 top-3 z-[2] flex flex-wrap gap-1.5">
+            {product.featured ? <Badge>Drop</Badge> : null}
+            {sale ? (
+              <Badge className="bg-sale text-white">Sale</Badge>
             ) : null}
           </div>
-        </div>
-        <p className="line-clamp-2 text-sm text-muted">{product.description}</p>
-        <div className="mt-auto pt-1">
+        </Link>
+        <div className="absolute inset-x-3 bottom-3 z-10">
           <QuickAdd productName={product.name} variants={product.variants} />
+        </div>
+      </div>
+      <div className="flex items-start justify-between gap-3 p-4">
+        <div className="min-w-0">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-muted">
+            {product.categories.map((cat) => cat.name).join(" · ") || "Kit"}
+          </p>
+          <h3 className="font-display mt-1 text-lg leading-tight tracking-tight">
+            <Link
+              href={`/products/${product.slug}`}
+              prefetch
+              className="hover:underline"
+            >
+              {product.name}
+            </Link>
+          </h3>
+        </div>
+        <div className="shrink-0 text-right">
+          <p className="font-medium tabular-nums">{formatMoney(lowest)}</p>
+          {compare ? (
+            <p className="text-xs text-muted line-through tabular-nums">
+              {formatMoney(compare)}
+            </p>
+          ) : null}
         </div>
       </div>
     </article>

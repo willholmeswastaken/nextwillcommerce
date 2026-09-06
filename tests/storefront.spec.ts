@@ -54,6 +54,14 @@ test.describe("storefront", () => {
     const cartDrawer = page.getByRole("dialog", { name: "Your cart" });
     await expect(cartDrawer).toBeVisible();
     await expect(cartDrawer.getByText("Pulse Compression Socks")).toBeVisible();
+    await cartDrawer.getByRole("button", { name: "Close cart panel" }).click();
+
+    await page.getByRole("button", { name: /quick add aero runner/i }).click();
+    await page.getByRole("button", { name: "US 8" }).click();
+    await expect(page.getByRole("dialog", { name: "Your cart" })).toBeVisible();
+    await expect(
+      page.getByRole("dialog", { name: "Your cart" }).getByText("Aero Runner"),
+    ).toBeVisible();
   });
 
   test("add to cart and mock checkout", async ({ page }) => {
