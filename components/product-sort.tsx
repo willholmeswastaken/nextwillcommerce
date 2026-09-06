@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import {
   CATALOG_SORTS,
   productsHref,
@@ -10,6 +11,7 @@ import {
 
 export function ProductSort({ query }: { query: CatalogQuery }) {
   const router = useRouter();
+  const [, startTransition] = useTransition();
 
   return (
     <label className="flex items-center gap-2 text-sm">
@@ -18,14 +20,14 @@ export function ProductSort({ query }: { query: CatalogQuery }) {
         value={query.sort}
         aria-label="Sort products"
         onChange={(event) => {
-          router.push(
-            productsHref({
-              ...query,
-              sort: event.target.value as CatalogSort,
-              page: 1,
-            }),
-            { scroll: false },
-          );
+          const href = productsHref({
+            ...query,
+            sort: event.target.value as CatalogSort,
+            page: 1,
+          });
+          startTransition(() => {
+            router.push(href, { scroll: false });
+          });
         }}
         className="h-10 rounded-full border border-border bg-card px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-ring/30"
       >

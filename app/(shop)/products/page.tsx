@@ -1,6 +1,7 @@
 import { Suspense } from "react";
-import Link from "next/link";
 import { getCategories, getProductListing } from "@/app/(shop)/catalog";
+import { CatalogFilterLink } from "@/components/catalog-filter-link";
+import { LISTER_CONTROLS_ID, ListerScroll } from "@/components/lister-scroll";
 import { ProductCard } from "@/components/product-card";
 import { ProductFilters } from "@/components/product-filters";
 import { ProductPagination } from "@/components/product-pagination";
@@ -87,7 +88,11 @@ async function ProductsContent({
         />
       )}
 
-      <div className="grid gap-10 lg:grid-cols-[16.5rem_1fr]">
+      <ListerScroll />
+      <div
+        id={LISTER_CONTROLS_ID}
+        className="grid gap-10 lg:grid-cols-[16.5rem_1fr]"
+      >
         <details
           open={hasActiveFilters(query)}
           className="rounded-2xl border border-border bg-card p-4 lg:hidden"
@@ -97,7 +102,7 @@ async function ProductsContent({
             <ProductFilters categories={categories} query={query} />
           </div>
         </details>
-        <aside className="hidden lg:block">
+        <aside className="hidden lg:sticky lg:top-28 lg:block lg:self-start">
           <ProductFilters categories={categories} query={query} />
         </aside>
 
@@ -115,14 +120,12 @@ async function ProductsContent({
             <div className="rounded-[1.75rem] border border-dashed border-border p-10 text-center text-muted">
               <p>Nothing here yet. Loosen a filter and try again.</p>
               {hasActiveFilters(query) ? (
-                <Link
+                <CatalogFilterLink
                   href="/products"
-                  prefetch
-                  scroll={false}
                   className="mt-4 inline-flex text-sm text-foreground underline"
                 >
                   Clear all filters
-                </Link>
+                </CatalogFilterLink>
               ) : null}
             </div>
           ) : (

@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { CatalogFilterChip, CatalogFilterLink } from "@/components/catalog-filter-link";
 import {
   PRICE_BANDS,
   hasActiveFilters,
@@ -12,32 +11,6 @@ type CategoryOption = {
   name: string;
   slug: string;
 };
-
-function FilterLink({
-  href,
-  active,
-  children,
-}: {
-  href: string;
-  active: boolean;
-  children: React.ReactNode;
-}) {
-  return (
-    <Link
-      href={href}
-      prefetch
-      scroll={false}
-      className={cn(
-        "flex h-9 items-center justify-between rounded-full border px-3 text-sm transition",
-        active
-          ? "border-accent bg-accent text-accent-foreground"
-          : "border-border bg-card hover:bg-accent-soft",
-      )}
-    >
-      {children}
-    </Link>
-  );
-}
 
 export function ProductFilters({
   categories,
@@ -53,11 +26,11 @@ export function ProductFilters({
           Category
         </p>
         <div className="flex flex-col gap-2">
-          <FilterLink href={productsHref({ ...query, category: undefined, page: 1 })} active={!query.category}>
+          <CatalogFilterChip href={productsHref({ ...query, category: undefined, page: 1 })} active={!query.category}>
             All kit
-          </FilterLink>
+          </CatalogFilterChip>
           {categories.map((category) => (
-            <FilterLink
+            <CatalogFilterChip
               key={category.id}
               href={productsHref({
                 ...query,
@@ -68,7 +41,7 @@ export function ProductFilters({
               active={query.category === category.slug}
             >
               {category.name}
-            </FilterLink>
+            </CatalogFilterChip>
           ))}
         </div>
       </div>
@@ -79,7 +52,7 @@ export function ProductFilters({
         </p>
         <div className="flex flex-col gap-2">
           {PRICE_BANDS.map((band) => (
-            <FilterLink
+            <CatalogFilterChip
               key={band.id}
               href={productsHref({
                 ...query,
@@ -89,7 +62,7 @@ export function ProductFilters({
               active={query.price === band.id}
             >
               {band.label}
-            </FilterLink>
+            </CatalogFilterChip>
           ))}
         </div>
       </div>
@@ -99,30 +72,28 @@ export function ProductFilters({
           Offers & stock
         </p>
         <div className="flex flex-col gap-2">
-          <FilterLink
+          <CatalogFilterChip
             href={productsHref({ ...query, sale: !query.sale, page: 1 })}
             active={query.sale}
           >
             On sale
-          </FilterLink>
-          <FilterLink
+          </CatalogFilterChip>
+          <CatalogFilterChip
             href={productsHref({ ...query, inStock: !query.inStock, page: 1 })}
             active={query.inStock}
           >
             In stock
-          </FilterLink>
+          </CatalogFilterChip>
         </div>
       </div>
 
       {hasActiveFilters(query) ? (
-        <Link
+        <CatalogFilterLink
           href="/products"
-          prefetch
-          scroll={false}
           className="inline-flex text-sm text-foreground underline-offset-4 hover:underline"
         >
           Clear all filters
-        </Link>
+        </CatalogFilterLink>
       ) : null}
     </nav>
   );

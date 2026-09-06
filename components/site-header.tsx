@@ -59,7 +59,7 @@ const NAV = [
 
 export function SiteHeader() {
   return (
-    <div className="sticky top-0 z-40">
+    <div className="sticky top-0 z-40" data-site-header>
       <div className="bg-inverse text-inverse-foreground">
         <Link
           href="/products?sale=1"

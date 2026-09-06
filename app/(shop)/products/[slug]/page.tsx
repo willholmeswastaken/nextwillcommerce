@@ -61,7 +61,8 @@ function ProductView({ product }: { product: ProductWithVariants }) {
       className="grid gap-6 lg:grid-cols-2 lg:gap-10"
     >
       <div
-        className={`relative -mx-4 h-[38svh] w-[calc(100%+2rem)] overflow-hidden sm:mx-0 sm:h-auto sm:w-full sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+        data-testid="product-hero"
+        className={`relative left-1/2 h-[min(48svh,100vw)] w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden sm:left-auto sm:h-auto sm:w-full sm:max-w-none sm:translate-x-0 sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
       >
         <ProductImage
           src={product.imageUrl}
@@ -161,7 +162,7 @@ export default function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-7xl overflow-x-clip px-4 py-4 sm:px-6 sm:py-10">
       {/* params must sit in Suspense for Cache Components; catalog data is cached. */}
       <Suspense
         fallback={

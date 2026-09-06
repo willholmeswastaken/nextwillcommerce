@@ -76,6 +76,52 @@ test.describe("storefront", () => {
     ).toBeVisible();
   });
 
+  test("mobile PDP image is full width with an in-flow buy button", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/products/lumen-windbreaker");
+
+    const hero = page.locator('[data-testid="product-hero"]');
+    await expect(hero).toBeVisible();
+    const box = await hero.boundingBox();
+    expect(box).toBeTruthy();
+    expect(box!.x).toBeLessThanOrEqual(1);
+    expect(box!.width).toBeGreaterThanOrEqual(388);
+
+    const addToCart = page.getByRole("button", { name: "Add to cart" });
+    await expect(addToCart).toBeInViewport();
+    const buttonBox = await addToCart.boundingBox();
+    const titleBox = await page
+      .getByRole("heading", { name: "Lumen Windbreaker" })
+      .boundingBox();
+    expect(buttonBox).toBeTruthy();
+    expect(titleBox).toBeTruthy();
+    expect(buttonBox!.y).toBeGreaterThan(titleBox!.y);
+    expect(buttonBox!.width).toBeGreaterThan(300);
+  });
+
+  test("applying a lister filter keeps the filters in view", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/products");
+
+    await page.locator("details").getByText("Filters", { exact: true }).click();
+    const footwear = page
+      .getByRole("navigation", { name: "Filters" })
+      .getByRole("link", { name: "Footwear" });
+    await footwear.scrollIntoViewIfNeeded();
+    await footwear.click();
+
+    await expect(page).toHaveURL(/category=footwear/);
+    await expect(
+      page.getByRole("navigation", { name: "Filters" }).getByRole("link", {
+        name: "Footwear",
+      }),
+    ).toBeInViewport();
+  });
+
   test("add to cart and mock checkout", async ({ page }) => {
     await page.goto("/products/aero-runner");
     await page.getByRole("button", { name: "Add to cart" }).click();
