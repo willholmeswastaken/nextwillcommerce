@@ -56,12 +56,15 @@ export function ProductsListingSkeleton({
   );
 }
 
-/** Matches /products/[slug]: image + badges, title, copy, variant pills, CTA. */
+/** Matches /products/[slug]: full-bleed image + badges, title, copy, variant pills, CTA. */
 export function ProductDetailSkeleton() {
   return (
-    <div data-testid="product-shell" className="grid gap-6 lg:grid-cols-2 lg:gap-10">
-      <div className="aspect-[4/3] max-h-[36svh] animate-pulse rounded-[1.5rem] border border-border bg-border/60 sm:rounded-[2rem] lg:aspect-[4/5] lg:max-h-none" />
-      <div className="flex flex-col justify-center">
+    <div
+      data-testid="product-shell"
+      className="grid gap-6 lg:grid-cols-2 lg:gap-10"
+    >
+      <div className="aspect-square max-h-[70svh] animate-pulse bg-border/60 sm:mx-6 sm:rounded-[2rem] sm:border sm:border-border lg:mx-0 lg:aspect-[4/5] lg:max-h-none" />
+      <div className="flex flex-col justify-center px-4 sm:px-6 lg:px-0">
         <div className="flex flex-wrap gap-2">
           <div className="h-6 w-16 animate-pulse rounded-full bg-border/60" />
           <div className="h-6 w-20 animate-pulse rounded-full bg-border/50" />

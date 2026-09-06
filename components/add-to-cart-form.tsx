@@ -71,7 +71,8 @@ export function AddToCartForm({
           size="lg"
           className={cn(
             "min-w-[10.5rem] transition-all duration-300",
-            justAdded && "bg-accent shadow-[0_12px_28px_-14px_rgba(15,118,110,0.7)]",
+            justAdded &&
+              "bg-accent shadow-[0_12px_28px_-14px_rgba(15,118,110,0.7)]",
           )}
           disabled={outOfStock || pending}
           aria-busy={pending}
