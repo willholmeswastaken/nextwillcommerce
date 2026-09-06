@@ -56,7 +56,7 @@ export function QuickAdd({
 
   if (inStock.length === 0) {
     return (
-      <p className="rounded-full bg-inverse/80 px-3 py-1.5 text-[11px] uppercase tracking-wide text-inverse-foreground">
+      <p className="pointer-events-auto absolute bottom-3 left-3 rounded-full bg-inverse/80 px-3 py-1.5 text-[11px] uppercase tracking-wide text-inverse-foreground">
         Sold out
       </p>
     );
@@ -64,47 +64,53 @@ export function QuickAdd({
 
   if (picking && inStock.length > 1) {
     return (
-      <div className="w-full rounded-xl bg-inverse/92 p-3 text-inverse-foreground shadow-[0_16px_40px_-24px_rgba(23,23,23,0.65)] backdrop-blur-md">
-        <div className="mb-2 flex items-center justify-between gap-2">
-          <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-inverse-foreground/65">
-            Select a size
-          </p>
-          <button
-            type="button"
-            onClick={() => setPicking(false)}
-            className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-inverse-foreground/10"
-            aria-label="Close size picker"
-          >
-            <X className="h-3.5 w-3.5" />
-          </button>
-        </div>
-        <div className="flex flex-wrap gap-1.5">
-          {inStock.map((variant) => (
+      <>
+        <div
+          className="pointer-events-auto absolute inset-0"
+          onClick={() => setPicking(false)}
+        />
+        <div className="pointer-events-auto absolute inset-x-3 bottom-3 rounded-xl bg-inverse/92 p-3 text-inverse-foreground shadow-[0_16px_40px_-24px_rgba(23,23,23,0.65)] backdrop-blur-md">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-inverse-foreground/65">
+              Select a size
+            </p>
             <button
-              key={variant.id}
               type="button"
-              disabled={pending}
-              onClick={() => addVariant(variant)}
-              className="inline-flex h-9 min-w-10 items-center justify-center rounded-lg bg-inverse-foreground/12 px-2.5 text-xs font-medium transition hover:bg-inverse-foreground hover:text-inverse disabled:opacity-50"
+              onClick={() => setPicking(false)}
+              className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-inverse-foreground/10"
+              aria-label="Close size picker"
             >
-              {chipLabel(inStock, variant)}
+              <X className="h-3.5 w-3.5" />
             </button>
-          ))}
+          </div>
+          <div className="flex flex-wrap gap-1.5">
+            {inStock.map((variant) => (
+              <button
+                key={variant.id}
+                type="button"
+                disabled={pending}
+                onClick={() => addVariant(variant)}
+                className="inline-flex h-9 min-w-10 items-center justify-center rounded-lg bg-inverse-foreground/12 px-2.5 text-xs font-medium transition hover:bg-inverse-foreground hover:text-inverse disabled:opacity-50"
+              >
+                {chipLabel(inStock, variant)}
+              </button>
+            ))}
+          </div>
+          {error ? (
+            <p role="alert" className="mt-2 text-xs text-red-200">
+              {error}
+            </p>
+          ) : null}
+          <span className="sr-only" aria-live="polite">
+            {pending ? `Adding ${productName} to cart` : ""}
+          </span>
         </div>
-        {error ? (
-          <p role="alert" className="mt-2 text-xs text-red-200">
-            {error}
-          </p>
-        ) : null}
-        <span className="sr-only" aria-live="polite">
-          {pending ? `Adding ${productName} to cart` : ""}
-        </span>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className="flex flex-col items-end gap-1">
+    <div className="pointer-events-auto absolute bottom-3 right-3 flex flex-col items-end gap-1">
       <button
         type="button"
         disabled={pending}

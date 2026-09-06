@@ -61,7 +61,7 @@ export function ProductCard({
             ) : null}
           </div>
         </Link>
-        <div className="absolute inset-x-3 bottom-3 z-10">
+        <div className="pointer-events-none absolute inset-0 z-10">
           <QuickAdd productName={product.name} variants={product.variants} />
         </div>
       </div>
