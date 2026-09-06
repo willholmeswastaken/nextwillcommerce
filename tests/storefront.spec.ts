@@ -20,6 +20,8 @@ test.describe("storefront", () => {
     await expect(page.locator('[data-testid="product-shell"]')).toBeVisible();
     await expect(page.getByRole("heading", { name: "Aero Runner" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Add to cart" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "You may also like" })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Trail Peak Boot/i }).first()).toBeVisible();
   });
 
   test("add to cart and mock checkout", async ({ page }) => {

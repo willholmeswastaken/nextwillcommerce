@@ -40,8 +40,9 @@ export async function getProducts(categorySlug?: string) {
 export async function getProductBySlug(slug: string) {
   "use cache";
   cacheTag("products", `product:${slug}`);
-  // Short TTL so inventory/pricing on PDPs stay reasonably fresh.
-  cacheLife("minutes");
+  // Hours + updateTag("products") on checkout: client navigations stay
+  // instant (5m stale) and cold PDPs do not block-regenerate after 1 hour.
+  cacheLife("hours");
 
   return runtime.runPromise(
     Effect.gen(function* () {
@@ -49,6 +50,32 @@ export async function getProductBySlug(slug: string) {
       return yield* products.getBySlug(slug);
     }),
   );
+}
+
+export async function getProductSlugs() {
+  "use cache";
+  cacheTag("products", "slugs");
+  cacheLife("hours");
+
+  return runtime.runPromise(
+    Effect.gen(function* () {
+      const products = yield* ProductService;
+      return yield* products.listSlugs();
+    }),
+  );
+}
+
+export async function getRelatedProducts(slug: string, categorySlug?: string) {
+  "use cache";
+  cacheTag(
+    "products",
+    `related:${slug}`,
+    categorySlug ? `category:${categorySlug}` : "all",
+  );
+  cacheLife("hours");
+
+  const products = await getProducts(categorySlug);
+  return products.filter((product) => product.slug !== slug).slice(0, 3);
 }
 
 export async function getCategories() {

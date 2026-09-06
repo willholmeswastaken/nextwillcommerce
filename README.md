@@ -89,7 +89,7 @@ Most storefront routes use the **Cache** strategy so navigations feel fully popu
 
 | Route | Strategy | Why |
 |-------|----------|-----|
-| `/`, `/products`, `/products/[slug]` | **Cache** (`'use cache'` + tags) | Catalog is mostly static — await cached data, no skeleton demos |
+| `/`, `/products`, `/products/[slug]` | **Cache** (`'use cache'` + tags, PDP `generateStaticParams`) | Catalog is mostly static — await cached data, no skeleton demos |
 | `/checkout` | **Stream** (Suspense shell) | Demo route — shell first, cart + payment stream in |
 | `/order/confirmation/[id]` | **Block** (`export const instant = false`) | Must show authoritative paid state |
 
@@ -134,9 +134,10 @@ pnpm test:e2e     # Playwright storefront flow
 2. Cache catalog with `'use cache'` + `cacheTag` / `updateTag` — await it when possible so pages paint fully populated
 3. Use `<Suspense>` only for runtime data (`params`, `searchParams`, `connection()`); avoid stacking `loading.tsx` + nested skeletons on catalog routes
 4. One shell per route (Partial Prefetching) — use `<Link prefetch>` for deeper per-link prefetch
-5. Never call `auth.api.getSession()` inside cached functions
-6. Parallelize independent Effect fibers / promises on page load
-7. Ship catalog photos from `/public/products` and let `next/image` + Vercel Image Optimization serve AVIF/WebP with correct `sizes` / `preload`
+5. Prerender PDPs with `generateStaticParams` + `prefetch = "allow-runtime"` so listing → product navigations resolve from the static/runtime prefetch cache
+6. Never call `auth.api.getSession()` inside cached functions
+7. Parallelize independent Effect fibers / promises on page load
+8. Ship catalog photos from `/public/products` and let `next/image` + Vercel Image Optimization serve AVIF/WebP with correct `sizes` / `preload`
 
 ## Customization
 
