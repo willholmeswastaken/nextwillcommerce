@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
+import { useOptimistic, useTransition } from "react";
 import {
   CATALOG_SORTS,
   productsHref,
@@ -11,21 +11,24 @@ import {
 
 export function ProductSort({ query }: { query: CatalogQuery }) {
   const router = useRouter();
+  const [sort, setSort] = useOptimistic(query.sort);
   const [, startTransition] = useTransition();
 
   return (
     <label className="flex items-center gap-2 text-sm">
       <span className="text-muted">Sort</span>
       <select
-        value={query.sort}
+        value={sort}
         aria-label="Sort products"
         onChange={(event) => {
+          const nextSort = event.target.value as CatalogSort;
           const href = productsHref({
             ...query,
-            sort: event.target.value as CatalogSort,
+            sort: nextSort,
             page: 1,
           });
           startTransition(() => {
+            setSort(nextSort);
             router.push(href, { scroll: false });
           });
         }}
