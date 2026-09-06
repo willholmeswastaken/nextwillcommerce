@@ -231,7 +231,7 @@ function DrawerContents({
             className={cn(
               "flex gap-3 rounded-2xl border border-border bg-background/70 p-3 transition-all duration-500",
               highlightedItemId === item.id &&
-                "animate-cart-line-in border-accent/40 bg-accent-soft/30 shadow-[0_12px_30px_-20px_rgba(15,118,110,0.55)]",
+                "animate-cart-line-in border-foreground/20 bg-accent-soft",
             )}
             style={{ animationDelay: `${Math.min(index, 4) * 40}ms` }}
           >

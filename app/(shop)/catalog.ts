@@ -3,6 +3,11 @@ import { cacheLife, cacheTag } from "next/cache";
 import { Effect } from "effect";
 import { runtime } from "@/app/server/runtime";
 import { ProductService } from "@/app/server/features/product/product.service";
+import {
+  applyCatalogQuery,
+  parseCatalogQuery,
+  type CatalogSearchParams,
+} from "@/lib/catalog-query";
 
 /**
  * Cached catalog queries — Instant Navigations Cache strategy.
@@ -76,6 +81,15 @@ export async function getRelatedProducts(slug: string, categorySlug?: string) {
 
   const products = await getProducts(categorySlug);
   return products.filter((product) => product.slug !== slug).slice(0, 3);
+}
+
+export async function getProductListing(raw: CatalogSearchParams) {
+  "use cache";
+  cacheTag("products", raw.category ? `category:${raw.category}` : "all");
+  cacheLife("hours");
+
+  const products = await getProducts();
+  return applyCatalogQuery(products, parseCatalogQuery(raw));
 }
 
 export async function getCategories() {

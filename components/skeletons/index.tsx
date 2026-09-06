@@ -40,7 +40,7 @@ export function ProductGridSkeleton({ count = 6 }: { count?: number }) {
   );
 }
 
-/** Matches /products content: category pills + product grid. */
+/** Matches /products content: promo + filters + toolbar + product grid. */
 export function ProductsListingSkeleton({
   count = 6,
 }: {
@@ -48,9 +48,15 @@ export function ProductsListingSkeleton({
 }) {
   return (
     <>
-      <CategoryPillsSkeleton />
-      <div className="mt-8">
-        <ProductGridSkeleton count={count} />
+      <div className="mb-10 h-40 animate-pulse rounded-[1.75rem] bg-border/50" />
+      <div className="grid gap-10 lg:grid-cols-[16.5rem_1fr]">
+        <div className="hidden space-y-3 lg:block">
+          <CategoryPillsSkeleton count={4} />
+        </div>
+        <div>
+          <div className="mb-6 h-10 w-48 animate-pulse rounded-full bg-border/40" />
+          <ProductGridSkeleton count={count} />
+        </div>
       </div>
     </>
   );
@@ -60,19 +66,17 @@ export function ProductsListingSkeleton({
 export function ProductDetailSkeleton() {
   return (
     <div data-testid="product-shell" className="grid gap-6 lg:grid-cols-2 lg:gap-10">
-      <div className="aspect-[4/3] max-h-[36svh] animate-pulse rounded-[1.5rem] border border-border bg-border/60 sm:rounded-[2rem] lg:aspect-[4/5] lg:max-h-none" />
-      <div className="flex flex-col justify-center">
+      <div
+        data-testid="product-hero"
+        className="relative h-[min(38svh,100vw)] w-full animate-pulse bg-border/60 sm:h-auto sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border"
+      />
+      <div className="flex flex-col justify-center px-4 sm:px-0">
         <div className="flex flex-wrap gap-2">
           <div className="h-6 w-16 animate-pulse rounded-full bg-border/60" />
           <div className="h-6 w-20 animate-pulse rounded-full bg-border/50" />
         </div>
         <div className="mt-3 h-9 w-3/4 max-w-md animate-pulse rounded bg-border/60 sm:mt-4 sm:h-10" />
-        <div className="mt-3 space-y-2 sm:mt-4">
-          <div className="h-4 w-full animate-pulse rounded bg-border/50" />
-          <div className="h-4 w-full animate-pulse rounded bg-border/45" />
-          <div className="h-4 w-4/5 animate-pulse rounded bg-border/40" />
-        </div>
-        <div className="mt-6 space-y-5 sm:mt-8">
+        <div className="mt-4 space-y-3 sm:mt-8 sm:space-y-5">
           <div>
             <div className="mb-2 h-4 w-24 animate-pulse rounded bg-border/50" />
             <div className="flex flex-wrap gap-2">
@@ -81,13 +85,18 @@ export function ProductDetailSkeleton() {
               <div className="h-9 w-20 animate-pulse rounded-full border border-border bg-border/40" />
             </div>
           </div>
-          <div className="flex items-end justify-between gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div className="space-y-2">
               <div className="h-9 w-28 animate-pulse rounded bg-border/60" />
               <div className="h-4 w-20 animate-pulse rounded bg-border/40" />
             </div>
-            <div className="h-12 w-36 animate-pulse rounded-full bg-border/60" />
+            <div className="h-12 w-full rounded-full bg-border/60 sm:w-36" />
           </div>
+        </div>
+        <div className="mt-6 space-y-2">
+          <div className="h-4 w-full animate-pulse rounded bg-border/50" />
+          <div className="h-4 w-full animate-pulse rounded bg-border/45" />
+          <div className="h-4 w-4/5 animate-pulse rounded bg-border/40" />
         </div>
       </div>
     </div>

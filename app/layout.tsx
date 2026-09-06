@@ -1,19 +1,19 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Fraunces, Sora } from "next/font/google";
 import "./globals.css";
 import { CartShell } from "@/components/cart-shell";
 import { CartProvider } from "@/components/cart-provider";
 import { SiteFooter, SiteHeader } from "@/components/site-header";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
   display: "swap",
 });
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: "%s · WillCommerce",
   },
   description:
-    "A blazing-fast Next.js 16.3 ecommerce template with Effect-TS, Instant Navigations, and Better Auth.",
+    "Performance kit for after-hours miles. Shop footwear, apparel, and accessories with instant checkout.",
 };
 
 function AppChrome({ children }: { children: React.ReactNode }) {
@@ -45,7 +45,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${sora.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
         <Suspense

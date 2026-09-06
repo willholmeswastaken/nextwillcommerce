@@ -61,7 +61,8 @@ function ProductView({ product }: { product: ProductWithVariants }) {
       className="grid gap-6 lg:grid-cols-2 lg:gap-10"
     >
       <div
-        className={`relative aspect-[4/3] max-h-[36svh] overflow-hidden rounded-[1.5rem] border border-border sm:rounded-[2rem] lg:aspect-[4/5] lg:max-h-none ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+        data-testid="product-hero"
+        className={`relative h-[min(38svh,100vw)] w-full overflow-hidden sm:h-auto sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
       >
         <ProductImage
           src={product.imageUrl}
@@ -72,24 +73,24 @@ function ProductView({ product }: { product: ProductWithVariants }) {
           className="object-cover"
         />
       </div>
-      <div className="flex flex-col justify-center">
+      <div className="flex flex-col justify-center px-4 sm:px-0">
         <div className="flex flex-wrap gap-2">
           {product.categories.map((cat) => (
             <Badge key={cat.id}>{cat.name}</Badge>
           ))}
         </div>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:mt-4 sm:text-4xl">
+        <h1 className="font-display mt-3 text-3xl tracking-tight sm:mt-4 sm:text-5xl">
           {product.name}
         </h1>
-        <p className="mt-3 text-base leading-relaxed text-muted sm:mt-4">
-          {product.description}
-        </p>
-        <div className="mt-6 sm:mt-8">
+        <div className="mt-4 sm:mt-8">
           <AddToCartForm
             variants={product.variants}
             productName={product.name}
           />
         </div>
+        <p className="mt-6 text-base leading-relaxed text-muted">
+          {product.description}
+        </p>
       </div>
     </div>
   );
@@ -107,9 +108,9 @@ async function RelatedProducts({
 
   return (
     <section className="mt-14 border-t border-border pt-10">
-      <h2 className="text-2xl font-semibold tracking-tight">You may also like</h2>
+      <h2 className="font-display text-3xl tracking-tight">You may also like</h2>
       <p className="mt-1 text-sm text-muted">
-        More from the catalog — cached for instant navigations.
+        Quick-add from here, or open a piece for the full kit notes.
       </p>
       <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {related.map((product) => (
@@ -135,7 +136,7 @@ async function ProductDetails({
 
   return (
     <>
-      <nav className="mb-6 text-sm text-muted">
+      <nav className="mb-3 px-4 text-sm text-muted sm:mb-6 sm:px-0">
         <Link href="/products" prefetch className="hover:text-foreground">
           Shop
         </Link>
@@ -145,12 +146,14 @@ async function ProductDetails({
         <span className="text-foreground">{product.name}</span>
       </nav>
       <ProductView product={product} />
-      <Suspense fallback={null}>
-        <RelatedProducts
-          slug={product.slug}
-          categorySlug={product.categories[0]?.slug}
-        />
-      </Suspense>
+      <div className="px-4 sm:px-0">
+        <Suspense fallback={null}>
+          <RelatedProducts
+            slug={product.slug}
+            categorySlug={product.categories[0]?.slug}
+          />
+        </Suspense>
+      </div>
     </>
   );
 }
@@ -161,12 +164,12 @@ export default function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-7xl py-4 sm:px-6 sm:py-10">
       {/* params must sit in Suspense for Cache Components; catalog data is cached. */}
       <Suspense
         fallback={
           <>
-            <nav className="mb-6 text-sm text-muted">
+            <nav className="mb-3 px-4 text-sm text-muted sm:mb-6 sm:px-0">
               <Link href="/products" prefetch className="hover:text-foreground">
                 Shop
               </Link>

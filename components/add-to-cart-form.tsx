@@ -24,10 +24,31 @@ export function AddToCartForm({
   const selected = variants.find((v) => v.id === selectedId) ?? variants[0];
   const outOfStock = !selected || selected.inventory < 1;
 
+  const addSelected = () => {
+    if (!selected) return;
+    setError(null);
+    setJustAdded(false);
+    startTransition(async () => {
+      const result = await addToCartAction({
+        variantId: selected.id,
+        quantity: 1,
+      });
+      if (result.success) {
+        setJustAdded(true);
+        openWithCart(result.data, { variantId: selected.id });
+        window.setTimeout(() => setJustAdded(false), 1600);
+      } else {
+        setError(result.error.message);
+      }
+    });
+  };
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-3 sm:space-y-5">
       <div>
-        <p className="mb-2 text-sm font-medium text-muted">Select option</p>
+        <p className="mb-2 hidden text-sm font-medium text-muted sm:block">
+          Select option
+        </p>
         <div className="flex flex-wrap gap-2">
           {variants.map((variant) => {
             const active = variant.id === selected?.id;
@@ -54,7 +75,7 @@ export function AddToCartForm({
         </div>
       </div>
 
-      <div className="flex items-end justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-3xl font-semibold tracking-tight">
             {selected ? formatMoney(selected.priceCents) : "—"}
@@ -70,29 +91,12 @@ export function AddToCartForm({
         <Button
           size="lg"
           className={cn(
-            "min-w-[10.5rem] transition-all duration-300",
-            justAdded && "bg-accent shadow-[0_12px_28px_-14px_rgba(15,118,110,0.7)]",
+            "h-12 w-full min-w-[10.5rem] transition-all duration-300 sm:w-auto",
+            justAdded && "bg-foreground",
           )}
           disabled={outOfStock || pending}
           aria-busy={pending}
-          onClick={() => {
-            if (!selected) return;
-            setError(null);
-            setJustAdded(false);
-            startTransition(async () => {
-              const result = await addToCartAction({
-                variantId: selected.id,
-                quantity: 1,
-              });
-              if (result.success) {
-                setJustAdded(true);
-                openWithCart(result.data, { variantId: selected.id });
-                window.setTimeout(() => setJustAdded(false), 1600);
-              } else {
-                setError(result.error.message);
-              }
-            });
-          }}
+          onClick={addSelected}
         >
           <span className="relative inline-flex h-5 items-center justify-center">
             {pending ? (
