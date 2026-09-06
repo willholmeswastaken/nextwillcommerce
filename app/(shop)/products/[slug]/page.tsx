@@ -62,7 +62,7 @@ function ProductView({ product }: { product: ProductWithVariants }) {
     >
       <div
         data-testid="product-hero"
-        className={`relative h-[min(48svh,100vw)] w-full overflow-hidden sm:h-auto sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+        className={`relative h-[min(38svh,100vw)] w-full overflow-hidden sm:h-auto sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
       >
         <ProductImage
           src={product.imageUrl}
@@ -82,7 +82,7 @@ function ProductView({ product }: { product: ProductWithVariants }) {
         <h1 className="font-display mt-3 text-3xl tracking-tight sm:mt-4 sm:text-5xl">
           {product.name}
         </h1>
-        <div className="mt-5 sm:mt-8">
+        <div className="mt-4 sm:mt-8">
           <AddToCartForm
             variants={product.variants}
             productName={product.name}

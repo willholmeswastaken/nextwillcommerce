@@ -82,21 +82,23 @@ test.describe("storefront", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/products/lumen-windbreaker");
 
-    const hero = page
+    const shell = page
       .locator('[data-testid="product-shell"]')
       .filter({ has: page.getByRole("heading", { name: "Lumen Windbreaker" }) })
-      .locator('[data-testid="product-hero"]');
+      .locator("visible=true");
+    const hero = shell.locator('[data-testid="product-hero"]');
     await expect(hero).toBeVisible();
     const box = await hero.boundingBox();
     expect(box).toBeTruthy();
     expect(box!.x).toBeLessThanOrEqual(1);
     expect(box!.width).toBeGreaterThanOrEqual(388);
 
-    const addToCart = page.getByRole("button", { name: "Add to cart" });
+    const addToCart = shell.getByRole("button", { name: "Add to cart" });
     await expect(addToCart).toBeInViewport();
     const buttonBox = await addToCart.boundingBox();
     const titleBox = await page
       .getByRole("heading", { name: "Lumen Windbreaker" })
+      .locator("visible=true")
       .boundingBox();
     expect(buttonBox).toBeTruthy();
     expect(titleBox).toBeTruthy();

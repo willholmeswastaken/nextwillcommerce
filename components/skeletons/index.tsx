@@ -68,7 +68,7 @@ export function ProductDetailSkeleton() {
     <div data-testid="product-shell" className="grid gap-6 lg:grid-cols-2 lg:gap-10">
       <div
         data-testid="product-hero"
-        className="relative h-[min(48svh,100vw)] w-full animate-pulse bg-border/60 sm:h-auto sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border"
+        className="relative h-[min(38svh,100vw)] w-full animate-pulse bg-border/60 sm:h-auto sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border"
       />
       <div className="flex flex-col justify-center px-4 sm:px-0">
         <div className="flex flex-wrap gap-2">
@@ -76,7 +76,7 @@ export function ProductDetailSkeleton() {
           <div className="h-6 w-20 animate-pulse rounded-full bg-border/50" />
         </div>
         <div className="mt-3 h-9 w-3/4 max-w-md animate-pulse rounded bg-border/60 sm:mt-4 sm:h-10" />
-        <div className="mt-5 space-y-5 sm:mt-8">
+        <div className="mt-4 space-y-3 sm:mt-8 sm:space-y-5">
           <div>
             <div className="mb-2 h-4 w-24 animate-pulse rounded bg-border/50" />
             <div className="flex flex-wrap gap-2">

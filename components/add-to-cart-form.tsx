@@ -44,9 +44,11 @@ export function AddToCartForm({
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3 sm:space-y-5">
       <div>
-        <p className="mb-2 text-sm font-medium text-muted">Select option</p>
+        <p className="mb-2 hidden text-sm font-medium text-muted sm:block">
+          Select option
+        </p>
         <div className="flex flex-wrap gap-2">
           {variants.map((variant) => {
             const active = variant.id === selected?.id;
