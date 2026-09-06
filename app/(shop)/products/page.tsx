@@ -88,7 +88,10 @@ async function ProductsContent({
       )}
 
       <div className="grid gap-10 lg:grid-cols-[16.5rem_1fr]">
-        <details className="rounded-2xl border border-border bg-card p-4 lg:hidden">
+        <details
+          open={hasActiveFilters(query)}
+          className="rounded-2xl border border-border bg-card p-4 lg:hidden"
+        >
           <summary className="cursor-pointer text-sm font-medium">Filters</summary>
           <div className="pt-5">
             <ProductFilters categories={categories} query={query} />
@@ -115,6 +118,7 @@ async function ProductsContent({
                 <Link
                   href="/products"
                   prefetch
+                  scroll={false}
                   className="mt-4 inline-flex text-sm text-foreground underline"
                 >
                   Clear all filters

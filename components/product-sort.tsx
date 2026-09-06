@@ -24,6 +24,7 @@ export function ProductSort({ query }: { query: CatalogQuery }) {
               sort: event.target.value as CatalogSort,
               page: 1,
             }),
+            { scroll: false },
           );
         }}
         className="h-10 rounded-full border border-border bg-card px-3 text-sm outline-none focus:border-accent focus:ring-2 focus:ring-ring/30"

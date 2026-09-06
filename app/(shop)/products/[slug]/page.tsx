@@ -61,7 +61,7 @@ function ProductView({ product }: { product: ProductWithVariants }) {
       className="grid gap-6 lg:grid-cols-2 lg:gap-10"
     >
       <div
-        className={`relative -mx-4 aspect-square max-h-[42svh] overflow-hidden sm:mx-0 sm:max-h-none sm:rounded-2xl sm:border sm:border-border lg:aspect-[4/5] ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+        className={`relative -mx-4 h-[38svh] w-[calc(100%+2rem)] overflow-hidden sm:mx-0 sm:h-auto sm:w-full sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
       >
         <ProductImage
           src={product.imageUrl}
@@ -81,15 +81,15 @@ function ProductView({ product }: { product: ProductWithVariants }) {
         <h1 className="font-display mt-3 text-3xl tracking-tight sm:mt-4 sm:text-5xl">
           {product.name}
         </h1>
-        <p className="mt-3 text-base leading-relaxed text-muted sm:mt-4">
-          {product.description}
-        </p>
-        <div className="mt-6 sm:mt-8">
+        <div className="mt-5 sm:mt-8">
           <AddToCartForm
             variants={product.variants}
             productName={product.name}
           />
         </div>
+        <p className="mt-6 text-base leading-relaxed text-muted">
+          {product.description}
+        </p>
       </div>
     </div>
   );
@@ -161,7 +161,7 @@ export default function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-4 pb-28 sm:px-6 sm:py-10 sm:pb-10">
+    <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-10">
       {/* params must sit in Suspense for Cache Components; catalog data is cached. */}
       <Suspense
         fallback={

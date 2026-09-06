@@ -26,6 +26,7 @@ function FilterLink({
     <Link
       href={href}
       prefetch
+      scroll={false}
       className={cn(
         "flex h-9 items-center justify-between rounded-full border px-3 text-sm transition",
         active
@@ -117,6 +118,7 @@ export function ProductFilters({
         <Link
           href="/products"
           prefetch
+          scroll={false}
           className="inline-flex text-sm text-foreground underline-offset-4 hover:underline"
         >
           Clear all filters

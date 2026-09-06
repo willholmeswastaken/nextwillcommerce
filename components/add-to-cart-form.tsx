@@ -73,56 +73,55 @@ export function AddToCartForm({
         </div>
       </div>
 
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-md sm:static sm:z-auto sm:border-0 sm:bg-transparent sm:p-0 sm:backdrop-blur-none">
-        {error ? (
-          <p
-            role="alert"
-            className="mx-auto mb-3 max-w-7xl rounded-xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger"
-          >
-            {error}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-3xl font-semibold tracking-tight">
+            {selected ? formatMoney(selected.priceCents) : "—"}
           </p>
-        ) : null}
-        <div className="mx-auto flex max-w-7xl items-end justify-between gap-4">
-          <div>
-            <p className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              {selected ? formatMoney(selected.priceCents) : "—"}
-            </p>
-            <p className="text-sm text-muted">
-              {selected
-                ? selected.inventory > 0
-                  ? `${selected.inventory} in stock`
-                  : "Out of stock"
-                : null}
-            </p>
-          </div>
-          <Button
-            size="lg"
-            className={cn(
-              "min-w-[10.5rem] transition-all duration-300",
-              justAdded && "bg-foreground",
-            )}
-            disabled={outOfStock || pending}
-            aria-busy={pending}
-            onClick={addSelected}
-          >
-            <span className="relative inline-flex h-5 items-center justify-center">
-              {pending ? (
-                <span className="inline-flex items-center gap-2">
-                  <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
-                  <span>Adding…</span>
-                </span>
-              ) : justAdded ? (
-                <span className="inline-flex items-center gap-2 animate-cart-confirm">
-                  <Check className="h-4 w-4" aria-hidden />
-                  <span>Added</span>
-                </span>
-              ) : (
-                <span>Add to cart</span>
-              )}
-            </span>
-          </Button>
+          <p className="text-sm text-muted">
+            {selected
+              ? selected.inventory > 0
+                ? `${selected.inventory} in stock`
+                : "Out of stock"
+              : null}
+          </p>
         </div>
+        <Button
+          size="lg"
+          className={cn(
+            "h-12 w-full min-w-[10.5rem] transition-all duration-300 sm:w-auto",
+            justAdded && "bg-foreground",
+          )}
+          disabled={outOfStock || pending}
+          aria-busy={pending}
+          onClick={addSelected}
+        >
+          <span className="relative inline-flex h-5 items-center justify-center">
+            {pending ? (
+              <span className="inline-flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
+                <span>Adding…</span>
+              </span>
+            ) : justAdded ? (
+              <span className="inline-flex items-center gap-2 animate-cart-confirm">
+                <Check className="h-4 w-4" aria-hidden />
+                <span>Added</span>
+              </span>
+            ) : (
+              <span>Add to cart</span>
+            )}
+          </span>
+        </Button>
       </div>
+
+      {error ? (
+        <p
+          role="alert"
+          className="rounded-xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger"
+        >
+          {error}
+        </p>
+      ) : null}
 
       <span className="sr-only" aria-live="polite">
         {pending
