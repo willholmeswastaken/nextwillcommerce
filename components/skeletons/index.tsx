@@ -68,9 +68,9 @@ export function ProductDetailSkeleton() {
     <div data-testid="product-shell" className="grid gap-6 lg:grid-cols-2 lg:gap-10">
       <div
         data-testid="product-hero"
-        className="relative left-1/2 h-[min(48svh,100vw)] w-screen max-w-[100vw] -translate-x-1/2 animate-pulse bg-border/60 sm:left-auto sm:h-auto sm:w-full sm:max-w-none sm:translate-x-0 sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border"
+        className="relative h-[min(48svh,100vw)] w-full animate-pulse bg-border/60 sm:h-auto sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border"
       />
-      <div className="flex flex-col justify-center">
+      <div className="flex flex-col justify-center px-4 sm:px-0">
         <div className="flex flex-wrap gap-2">
           <div className="h-6 w-16 animate-pulse rounded-full bg-border/60" />
           <div className="h-6 w-20 animate-pulse rounded-full bg-border/50" />

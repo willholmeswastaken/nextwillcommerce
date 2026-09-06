@@ -62,7 +62,7 @@ function ProductView({ product }: { product: ProductWithVariants }) {
     >
       <div
         data-testid="product-hero"
-        className={`relative left-1/2 h-[min(48svh,100vw)] w-screen max-w-[100vw] -translate-x-1/2 overflow-hidden sm:left-auto sm:h-auto sm:w-full sm:max-w-none sm:translate-x-0 sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
+        className={`relative h-[min(48svh,100vw)] w-full overflow-hidden sm:h-auto sm:aspect-[4/5] sm:rounded-2xl sm:border sm:border-border ${PRODUCT_IMAGE_FRAME_CLASSNAME}`}
       >
         <ProductImage
           src={product.imageUrl}
@@ -73,7 +73,7 @@ function ProductView({ product }: { product: ProductWithVariants }) {
           className="object-cover"
         />
       </div>
-      <div className="flex flex-col justify-center px-0">
+      <div className="flex flex-col justify-center px-4 sm:px-0">
         <div className="flex flex-wrap gap-2">
           {product.categories.map((cat) => (
             <Badge key={cat.id}>{cat.name}</Badge>
@@ -136,7 +136,7 @@ async function ProductDetails({
 
   return (
     <>
-      <nav className="mb-3 text-sm text-muted sm:mb-6">
+      <nav className="mb-3 px-4 text-sm text-muted sm:mb-6 sm:px-0">
         <Link href="/products" prefetch className="hover:text-foreground">
           Shop
         </Link>
@@ -146,12 +146,14 @@ async function ProductDetails({
         <span className="text-foreground">{product.name}</span>
       </nav>
       <ProductView product={product} />
-      <Suspense fallback={null}>
-        <RelatedProducts
-          slug={product.slug}
-          categorySlug={product.categories[0]?.slug}
-        />
-      </Suspense>
+      <div className="px-4 sm:px-0">
+        <Suspense fallback={null}>
+          <RelatedProducts
+            slug={product.slug}
+            categorySlug={product.categories[0]?.slug}
+          />
+        </Suspense>
+      </div>
     </>
   );
 }
@@ -162,12 +164,12 @@ export default function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   return (
-    <div className="mx-auto max-w-7xl overflow-x-clip px-4 py-4 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-7xl py-4 sm:px-6 sm:py-10">
       {/* params must sit in Suspense for Cache Components; catalog data is cached. */}
       <Suspense
         fallback={
           <>
-            <nav className="mb-3 text-sm text-muted sm:mb-6">
+            <nav className="mb-3 px-4 text-sm text-muted sm:mb-6 sm:px-0">
               <Link href="/products" prefetch className="hover:text-foreground">
                 Shop
               </Link>

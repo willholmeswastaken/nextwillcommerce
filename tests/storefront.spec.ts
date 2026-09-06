@@ -82,7 +82,10 @@ test.describe("storefront", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto("/products/lumen-windbreaker");
 
-    const hero = page.locator('[data-testid="product-hero"]');
+    const hero = page
+      .locator('[data-testid="product-shell"]')
+      .filter({ has: page.getByRole("heading", { name: "Lumen Windbreaker" }) })
+      .locator('[data-testid="product-hero"]');
     await expect(hero).toBeVisible();
     const box = await hero.boundingBox();
     expect(box).toBeTruthy();
