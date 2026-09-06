@@ -78,7 +78,7 @@ function ProductView({ product }: { product: ProductWithVariants }) {
             <Badge key={cat.id}>{cat.name}</Badge>
           ))}
         </div>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:mt-4 sm:text-4xl">
+        <h1 className="font-display mt-3 text-3xl tracking-tight sm:mt-4 sm:text-5xl">
           {product.name}
         </h1>
         <p className="mt-3 text-base leading-relaxed text-muted sm:mt-4">
@@ -107,9 +107,9 @@ async function RelatedProducts({
 
   return (
     <section className="mt-14 border-t border-border pt-10">
-      <h2 className="text-2xl font-semibold tracking-tight">You may also like</h2>
+      <h2 className="font-display text-3xl tracking-tight">You may also like</h2>
       <p className="mt-1 text-sm text-muted">
-        More from the catalog — cached for instant navigations.
+        Quick-add from here, or open a piece for the full kit notes.
       </p>
       <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {related.map((product) => (
@@ -161,7 +161,7 @@ export default function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 sm:py-10">
+    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10">
       {/* params must sit in Suspense for Cache Components; catalog data is cached. */}
       <Suspense
         fallback={

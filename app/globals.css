@@ -1,16 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f4ef;
-  --foreground: #14110f;
-  --muted: #6b645c;
-  --card: #fffdf9;
-  --border: #e6dfd4;
-  --accent: #0f766e;
-  --accent-foreground: #f0fdfa;
-  --accent-soft: #ccfbf1;
-  --danger: #b91c1c;
-  --ring: #0d9488;
+  --background: #f1ebe1;
+  --foreground: #16120e;
+  --muted: #6d6358;
+  --card: #fffaf2;
+  --border: #e3d6c6;
+  --accent: #c94b16;
+  --accent-foreground: #fff7ed;
+  --accent-soft: #f8e0cc;
+  --pine: #1b322b;
+  --pine-foreground: #f4efe4;
+  --danger: #b42318;
+  --ring: #c94b16;
 }
 
 @theme inline {
@@ -22,24 +24,42 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-soft: var(--accent-soft);
+  --color-pine: var(--pine);
+  --color-pine-foreground: var(--pine-foreground);
   --color-danger: var(--danger);
   --color-ring: var(--ring);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sora);
+  --font-display: var(--font-fraunces);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 body {
   background:
-    radial-gradient(circle at top left, rgba(15, 118, 110, 0.08), transparent 40%),
-    radial-gradient(circle at top right, rgba(180, 83, 9, 0.06), transparent 35%),
+    radial-gradient(circle at 8% -10%, rgba(201, 75, 22, 0.12), transparent 38%),
+    radial-gradient(circle at 92% 0%, rgba(27, 50, 43, 0.1), transparent 32%),
     var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
+body::before {
+  content: "";
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.035;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 ::selection {
   background: var(--accent-soft);
   color: var(--foreground);
+}
+
+@utility font-display {
+  font-family: var(--font-display), ui-serif, Georgia, serif;
 }
 
 @keyframes cart-line-in {
@@ -119,6 +139,21 @@ body {
 
 @utility animate-order-check {
   animation: order-check-pop 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-reveal {
+  animation: reveal-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 /* Pulsing underlay behind product photos — removed once the image loads. */

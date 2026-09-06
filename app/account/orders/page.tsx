@@ -31,7 +31,7 @@ async function OrdersContent() {
     <>
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Your orders</h1>
+          <h1 className="font-display text-4xl tracking-tight">Your orders</h1>
           <p className="mt-2 text-sm text-muted">
             Signed in as {session.user.email}
           </p>

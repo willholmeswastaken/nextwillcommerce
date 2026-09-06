@@ -40,7 +40,7 @@ export function ProductGridSkeleton({ count = 6 }: { count?: number }) {
   );
 }
 
-/** Matches /products content: category pills + product grid. */
+/** Matches /products content: promo + filters + toolbar + product grid. */
 export function ProductsListingSkeleton({
   count = 6,
 }: {
@@ -48,9 +48,15 @@ export function ProductsListingSkeleton({
 }) {
   return (
     <>
-      <CategoryPillsSkeleton />
-      <div className="mt-8">
-        <ProductGridSkeleton count={count} />
+      <div className="mb-10 h-40 animate-pulse rounded-[1.75rem] bg-border/50" />
+      <div className="grid gap-10 lg:grid-cols-[16.5rem_1fr]">
+        <div className="hidden space-y-3 lg:block">
+          <CategoryPillsSkeleton count={4} />
+        </div>
+        <div>
+          <div className="mb-6 h-10 w-48 animate-pulse rounded-full bg-border/40" />
+          <ProductGridSkeleton count={count} />
+        </div>
       </div>
     </>
   );
