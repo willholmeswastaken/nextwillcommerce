@@ -117,7 +117,7 @@ export function ProductFilters({
         <Link
           href="/products"
           prefetch
-          className="inline-flex text-sm text-accent underline-offset-4 hover:underline"
+          className="inline-flex text-sm text-foreground underline-offset-4 hover:underline"
         >
           Clear all filters
         </Link>

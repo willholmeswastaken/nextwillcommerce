@@ -32,7 +32,7 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "group flex h-full flex-col overflow-hidden rounded-[1.6rem] border border-border bg-card shadow-[0_18px_40px_-32px_rgba(22,18,14,0.55)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_22px_50px_-28px_rgba(201,75,22,0.35)]",
+        "group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-[0_16px_36px_-30px_rgba(23,23,23,0.45)] transition duration-500 hover:-translate-y-1 hover:shadow-[0_20px_44px_-28px_rgba(23,23,23,0.28)]",
         className,
       )}
     >
@@ -56,7 +56,7 @@ export function ProductCard({
         <div className="absolute left-3 top-3 z-[2] flex flex-wrap gap-1.5">
           {product.featured ? <Badge>Drop</Badge> : null}
           {sale ? (
-            <Badge className="bg-accent text-accent-foreground">Sale</Badge>
+            <Badge className="bg-sale text-white">Sale</Badge>
           ) : null}
         </div>
       </Link>
@@ -70,7 +70,7 @@ export function ProductCard({
               <Link
                 href={`/products/${product.slug}`}
                 prefetch
-                className="hover:text-accent"
+                className="hover:underline"
               >
                 {product.name}
               </Link>

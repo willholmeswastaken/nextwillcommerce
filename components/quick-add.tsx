@@ -64,8 +64,7 @@ export function QuickAdd({
           aria-busy={pending}
           onClick={() => addVariant(variant)}
           className={cn(
-            "inline-flex h-11 w-full items-center justify-center rounded-full bg-foreground text-sm font-medium text-background transition hover:bg-accent hover:text-accent-foreground disabled:opacity-60",
-            justAdded && "bg-accent text-accent-foreground",
+            "inline-flex h-11 w-full items-center justify-center rounded-full bg-foreground text-sm font-medium text-background transition hover:opacity-85 disabled:opacity-60",
           )}
         >
           {pending ? (
@@ -136,8 +135,7 @@ export function QuickAdd({
           aria-busy={pending}
           onClick={() => setPicking(true)}
           className={cn(
-            "inline-flex h-11 w-full items-center justify-center rounded-full bg-foreground text-sm font-medium text-background transition hover:bg-accent hover:text-accent-foreground disabled:opacity-60",
-            justAdded && "bg-accent text-accent-foreground",
+            "inline-flex h-11 w-full items-center justify-center rounded-full bg-foreground text-sm font-medium text-background transition hover:opacity-85 disabled:opacity-60",
           )}
         >
           {pending ? (

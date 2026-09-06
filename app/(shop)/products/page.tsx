@@ -65,7 +65,7 @@ async function ProductsContent({
     <>
       {promo ? (
         <PromoBanner
-          variant="ink"
+          variant="inverse"
           className="mb-10"
           eyebrow={promo.eyebrow}
           title={promo.title}
@@ -77,7 +77,7 @@ async function ProductsContent({
         />
       ) : (
         <PromoBanner
-          variant="ember"
+          variant="inverse"
           className="mb-10"
           eyebrow="Lister note"
           title="Filter the wall. Quick-add from here."
@@ -115,7 +115,7 @@ async function ProductsContent({
                 <Link
                   href="/products"
                   prefetch
-                  className="mt-4 inline-flex text-sm text-accent underline"
+                  className="mt-4 inline-flex text-sm text-foreground underline"
                 >
                   Clear all filters
                 </Link>
@@ -152,7 +152,7 @@ export default function ProductsPage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
       <div className="mb-8">
-        <p className="text-[11px] uppercase tracking-[0.24em] text-accent">
+        <p className="text-[11px] uppercase tracking-[0.24em] text-muted">
           Catalog
         </p>
         <h1 className="font-display mt-2 text-4xl tracking-tight sm:text-5xl">

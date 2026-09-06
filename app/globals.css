@@ -1,18 +1,19 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f1ebe1;
-  --foreground: #16120e;
-  --muted: #6d6358;
-  --card: #fffaf2;
-  --border: #e3d6c6;
-  --accent: #c94b16;
-  --accent-foreground: #fff7ed;
-  --accent-soft: #f8e0cc;
-  --pine: #1b322b;
-  --pine-foreground: #f4efe4;
+  --background: #f3f1ec;
+  --foreground: #171717;
+  --muted: #6e6a64;
+  --card: #fffcf7;
+  --border: #ddd8d0;
+  --accent: #171717;
+  --accent-foreground: #f3f1ec;
+  --accent-soft: #e8e4dc;
+  --inverse: #171717;
+  --inverse-foreground: #f3f1ec;
+  --sale: #8a3b16;
   --danger: #b42318;
-  --ring: #c94b16;
+  --ring: #171717;
 }
 
 @theme inline {
@@ -24,8 +25,9 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-soft: var(--accent-soft);
-  --color-pine: var(--pine);
-  --color-pine-foreground: var(--pine-foreground);
+  --color-inverse: var(--inverse);
+  --color-inverse-foreground: var(--inverse-foreground);
+  --color-sale: var(--sale);
   --color-danger: var(--danger);
   --color-ring: var(--ring);
   --font-sans: var(--font-sora);
@@ -34,23 +36,9 @@
 }
 
 body {
-  background:
-    radial-gradient(circle at 8% -10%, rgba(201, 75, 22, 0.12), transparent 38%),
-    radial-gradient(circle at 92% 0%, rgba(27, 50, 43, 0.1), transparent 32%),
-    var(--background);
+  background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
-}
-
-body::before {
-  content: "";
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  opacity: 0.035;
-  mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 ::selection {

@@ -26,7 +26,7 @@ export function ContentBanner({
   return (
     <section
       className={cn(
-        "grid overflow-hidden rounded-[2rem] border border-border bg-card lg:grid-cols-2",
+        "grid overflow-hidden rounded-2xl border border-border bg-card lg:grid-cols-2",
         reverse && "lg:[&>*:first-child]:order-2",
       )}
     >
@@ -40,7 +40,7 @@ export function ContentBanner({
         />
       </div>
       <div className="flex flex-col justify-center px-6 py-10 sm:px-10 lg:px-14">
-        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-accent">
+        <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-muted">
           {eyebrow}
         </p>
         <h2 className="font-display mt-3 text-3xl leading-[1.05] tracking-tight sm:text-5xl">
@@ -52,7 +52,7 @@ export function ContentBanner({
         <Link
           href={href}
           prefetch
-          className="mt-8 inline-flex h-12 w-fit items-center rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:bg-accent hover:text-accent-foreground"
+          className="mt-8 inline-flex h-12 w-fit items-center rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:opacity-85"
         >
           {cta}
         </Link>

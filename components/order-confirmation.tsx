@@ -29,7 +29,7 @@ export function OrderConfirmation({ order }: { order: ConfirmationOrder }) {
   return (
     <div className="animate-order-confirm space-y-8">
       <header className="text-center">
-        <div className="mx-auto flex h-14 w-14 animate-order-check items-center justify-center rounded-full bg-accent text-accent-foreground shadow-[0_12px_30px_-12px_rgba(15,118,110,0.7)]">
+        <div className="mx-auto flex h-14 w-14 animate-order-check items-center justify-center rounded-full bg-foreground text-background">
           <Check className="h-6 w-6" strokeWidth={2.5} aria-hidden />
         </div>
         <p className="mt-5 text-sm font-medium uppercase tracking-[0.18em] text-accent">

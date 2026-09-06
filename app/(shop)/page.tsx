@@ -22,40 +22,40 @@ export default async function HomePage() {
 
   return (
     <div className="pb-16">
-      <section className="relative isolate overflow-hidden bg-pine text-pine-foreground">
+      <section className="relative isolate overflow-hidden bg-inverse text-inverse-foreground">
         <Image
           src="/products/aero-runner.jpg"
           alt=""
           fill
           preload
-          className="object-cover opacity-35"
+          className="object-cover opacity-30"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-pine via-pine/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-inverse via-inverse/80 to-inverse/20" />
         <div className="relative mx-auto grid min-h-[78svh] max-w-7xl items-end px-4 py-16 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center lg:py-24">
           <div className="animate-reveal">
-            <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-accent">
+            <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-inverse-foreground/55">
               Night drop 06 · After-hours kit
             </p>
             <h1 className="font-display mt-5 max-w-3xl text-5xl leading-[0.92] tracking-tight sm:text-7xl">
               Gear that earns the last mile.
             </h1>
-            <p className="mt-6 max-w-xl text-base text-pine-foreground/75 sm:text-lg">
+            <p className="mt-6 max-w-xl text-base text-inverse-foreground/70 sm:text-lg">
               Performance footwear, quiet apparel, and carry pieces for the
-              people still outside when the streets go sodium-orange.
+              people still outside when the streets go quiet.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/products"
                 prefetch
-                className="inline-flex h-12 items-center rounded-full bg-accent px-6 text-sm font-medium text-accent-foreground"
+                className="inline-flex h-12 items-center rounded-full bg-inverse-foreground px-6 text-sm font-medium text-inverse"
               >
                 Shop the catalog
               </Link>
               <Link
                 href="/products/aero-runner"
                 prefetch
-                className="inline-flex h-12 items-center rounded-full border border-pine-foreground/25 bg-pine-foreground/10 px-6 text-sm font-medium"
+                className="inline-flex h-12 items-center rounded-full border border-inverse-foreground/25 bg-inverse-foreground/10 px-6 text-sm font-medium"
               >
                 View Aero Runner
               </Link>
@@ -71,7 +71,7 @@ export default async function HomePage() {
               key={category.id}
               href={`/products?category=${category.slug}`}
               prefetch
-              className="group relative isolate min-h-52 overflow-hidden rounded-[1.7rem] bg-pine text-pine-foreground"
+              className="group relative isolate min-h-52 overflow-hidden rounded-2xl bg-inverse text-inverse-foreground"
             >
               <Image
                 src={CATEGORY_ART[category.slug] ?? "/products/cloud-soft-tee.jpg"}
@@ -80,7 +80,7 @@ export default async function HomePage() {
                 className="object-cover opacity-45 transition duration-700 group-hover:scale-105"
                 sizes="(max-width: 768px) 100vw, 33vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-pine via-pine/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-inverse via-inverse/25 to-transparent" />
               <div className="relative flex h-full flex-col justify-end p-6">
                 <p className="text-[11px] uppercase tracking-[0.24em] opacity-70">
                   Shop
@@ -94,7 +94,7 @@ export default async function HomePage() {
         </section>
 
         <PromoBanner
-          variant="ember"
+          variant="inverse"
           eyebrow="Limited window"
           title="Aero Runner — $20 off the night pair."
           description="Responsive foam, breathable knit, city-to-tempo. While this drop lasts."
@@ -107,7 +107,7 @@ export default async function HomePage() {
         <section>
           <div className="mb-6 flex items-end justify-between gap-4">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-accent">
+              <p className="text-[11px] uppercase tracking-[0.24em] text-muted">
                 Featured
               </p>
               <h2 className="font-display mt-2 text-3xl tracking-tight sm:text-4xl">
@@ -117,7 +117,7 @@ export default async function HomePage() {
             <Link
               href="/products"
               prefetch
-              className="text-sm text-accent underline-offset-4 hover:underline"
+              className="text-sm text-foreground underline-offset-4 hover:underline"
             >
               View all
             </Link>
@@ -149,7 +149,7 @@ export default async function HomePage() {
           <section>
             <div className="mb-6 flex items-end justify-between gap-4">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.24em] text-accent">
+                <p className="text-[11px] uppercase tracking-[0.24em] text-muted">
                   On sale
                 </p>
                 <h2 className="font-display mt-2 text-3xl tracking-tight">
@@ -159,7 +159,7 @@ export default async function HomePage() {
               <Link
                 href="/products?sale=1"
                 prefetch
-                className="text-sm text-accent underline-offset-4 hover:underline"
+                className="text-sm text-foreground underline-offset-4 hover:underline"
               >
                 All sale
               </Link>
@@ -184,7 +184,7 @@ export default async function HomePage() {
         />
 
         <PromoBanner
-          variant="ink"
+          variant="paper"
           eyebrow="Members"
           title="First kit ships free. Nightfall takes 15%."
           description="Join for early drops, repairs guidance, and the 5 a.m. club notes."
